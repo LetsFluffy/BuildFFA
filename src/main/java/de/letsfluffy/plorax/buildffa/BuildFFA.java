@@ -85,7 +85,6 @@ public class BuildFFA extends JavaPlugin {
 
     public void registerCommands() {
         new ForcemapCommand(this);
-        new StatsCommand(this);
     }
 
 

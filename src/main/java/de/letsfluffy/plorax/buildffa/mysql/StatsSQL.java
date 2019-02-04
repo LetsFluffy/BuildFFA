@@ -132,7 +132,6 @@ public class StatsSQL {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return itemStack;
     }
 

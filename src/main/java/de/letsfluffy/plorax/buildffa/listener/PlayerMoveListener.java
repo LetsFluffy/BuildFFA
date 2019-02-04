@@ -6,6 +6,7 @@ import de.letsfluffy.plorax.buildffa.utils.PacketScoreboard;
 import lombok.Getter;
 import net.plorax.api.PloraxAPI;
 import net.plorax.api.StatsAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -59,9 +60,15 @@ public class PlayerMoveListener implements Listener {
                 getBuildFFA().getKillstreak().put(player, 0);
                 int kills = getBuildFFA().getKillstreak().get(killer);
                 kills++;
+                if((kills == 3) || ((kills % 5) == 0)) {
+                    for(Player player1 : Bukkit.getOnlinePlayers()) {
+                        player1.sendMessage(getBuildFFA().getPrefix() + killer.getDisplayName() + " §7hat eine §a§l" + kills + "§r §7Killstreak!");
+                    }
+                }
                 getBuildFFA().getKillstreak().remove(killer);
                 getBuildFFA().getKillstreak().put(killer, kills);
                 killer.sendMessage(getBuildFFA().getPrefix() + "§7Du hast " + player.getDisplayName() + " §7getötet.");
+                killer.setHealth(20);
                 player.sendMessage(getBuildFFA().getPrefix() + "§7Du wurdest von " + killer.getDisplayName() + " §7getötet.");
             } else {
                 player.sendMessage(getBuildFFA().getPrefix() + "§7Du bist gestorben.");
