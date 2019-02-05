@@ -29,6 +29,9 @@ public class BlockPlaceListener implements Listener {
             event.setCancelled(true);
             event.getPlayer().sendMessage(getBuildFFA().getPrefix() + "§cIm SpecModus kannst du keine Blöcke platzieren.");
             return;
+        } else if(getBuildFFA().getMapImporter().getMap().getSpawnHigh() >= event.getBlock().getLocation().getY()) {
+            event.setCancelled(true);
+            return;
         }
         getBuildFFA().getPlacedBlocks().put(event.getBlock(), 8);
     }
