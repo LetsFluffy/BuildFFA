@@ -1,6 +1,7 @@
 package de.letsfluffy.plorax.buildffa.game;
 
 import de.letsfluffy.plorax.buildffa.BuildFFA;
+import de.letsfluffy.plorax.buildffa.events.DoubleCoinsEvent;
 import de.letsfluffy.plorax.buildffa.maps.MapImportData;
 import de.letsfluffy.plorax.buildffa.utils.ActionbarAPI;
 import de.letsfluffy.plorax.buildffa.utils.TitleAPI;
@@ -35,10 +36,13 @@ public class GameManager {
         BuildFFA.getBuildFFA().getMapImporter().importMaps();
         BuildFFA.getBuildFFA().getMapImporter().selectRandomMap();
 
+        BuildFFA.getBuildFFA().getEventRegistry().put("DoubleCoins", new DoubleCoinsEvent());
+
         BuildFFA.getBuildFFA().registerEvents();
         BuildFFA.getBuildFFA().registerCommands();
 
         BuildFFA.getBuildFFA().getGameManager().runBlockRemover();
+
     }
 
     public static void endGame() {

@@ -49,7 +49,7 @@ public class PlayerMoveListener implements Listener {
             if(getBuildFFA().getCombatLog().containsKey(player)) {
                 Player killer = getBuildFFA().getCombatLog().get(player);
                 getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
-                    PloraxAPI.getCoinAPI().addCoins(killer.getUniqueId(), 5);
+                    PloraxAPI.getCoinAPI().addCoins(killer.getUniqueId(), getBuildFFA().getKillCoins());
                     long[] l = new long[2];
                     l[0] = 1;
                     l[1] = 0;
@@ -68,10 +68,14 @@ public class PlayerMoveListener implements Listener {
                 getBuildFFA().getKillstreak().remove(killer);
                 getBuildFFA().getKillstreak().put(killer, kills);
                 killer.sendMessage(getBuildFFA().getPrefix() + "§7Du hast " + player.getDisplayName() + " §7getötet.");
+                killer.sendMessage(getBuildFFA().getPrefix() + "§7Die wurden §a§l " + getBuildFFA().getKillCoins() + " Coins §7hinzugefügt.");
                 killer.setHealth(20);
                 player.sendMessage(getBuildFFA().getPrefix() + "§7Du wurdest von " + killer.getDisplayName() + " §7getötet.");
+                player.sendMessage(getBuildFFA().getPrefix() + "§7Die wurde §a§l1 Coin §r§7abgezogen.");
+                PacketScoreboard.updateScoreboard(killer);
             } else {
                 player.sendMessage(getBuildFFA().getPrefix() + "§7Du bist gestorben.");
+                player.sendMessage(getBuildFFA().getPrefix() + "§7Die wurde §a§l1 Coin §r§7abgezogen.");
             }
         } else if(player.getLocation().getY() == getBuildFFA().getMapImporter().getMap().getSpawnHigh()) {
             player.getInventory().clear();

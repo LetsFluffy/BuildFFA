@@ -38,20 +38,25 @@ public class PacketScoreboard {
         final ScoreboardScore scoreboardScore10 = new ScoreboardScore(scoreboard, scoreboardObjective, "§8» §7Map");
         final ScoreboardScore scoreboardScore11 = new ScoreboardScore(scoreboard, scoreboardObjective, " §8➥ §e" + BuildFFA.getBuildFFA().getMapImporter().getMap().getDisplayName());
         final ScoreboardScore scoreboardScore12 = new ScoreboardScore(scoreboard, scoreboardObjective, "§5");
+        final ScoreboardScore scoreboardScore13 = new ScoreboardScore(scoreboard, scoreboardObjective, "§8» §7Event");
+        final ScoreboardScore scoreboardScore14 = new ScoreboardScore(scoreboard, scoreboardObjective, " §8➥ §a§e" +
+                (BuildFFA.getBuildFFA().getCurrentEvent() != null ? BuildFFA.getBuildFFA().getCurrentEvent().getName() : "Keins"));
 
-        scoreboardScore.setScore(12);
-        scoreboardScore1.setScore(11);
-        scoreboardScore2.setScore(10);
-        scoreboardScore3.setScore(9);
-        scoreboardScore4.setScore(8);
-        scoreboardScore5.setScore(7);
-        scoreboardScore6.setScore(6);
-        scoreboardScore7.setScore(5);
-        scoreboardScore8.setScore(4);
-        scoreboardScore9.setScore(3);
-        scoreboardScore10.setScore(2);
-        scoreboardScore11.setScore(1);
-        scoreboardScore12.setScore(0);
+        scoreboardScore.setScore(14);
+        scoreboardScore1.setScore(13);
+        scoreboardScore2.setScore(12);
+        scoreboardScore3.setScore(11);
+        scoreboardScore4.setScore(10);
+        scoreboardScore5.setScore(9);
+        scoreboardScore6.setScore(8);
+        scoreboardScore7.setScore(7);
+        scoreboardScore8.setScore(6);
+        scoreboardScore9.setScore(5);
+        scoreboardScore10.setScore(4);
+        scoreboardScore11.setScore(3);
+        scoreboardScore12.setScore(2);
+        scoreboardScore13.setScore(1);
+        scoreboardScore14.setScore(0);
 
         final PlayerConnection playerConnection = ((CraftPlayer)player).getHandle().playerConnection;
 
@@ -71,6 +76,8 @@ public class PacketScoreboard {
         playerConnection.sendPacket(new PacketPlayOutScoreboardScore(scoreboardScore10));
         playerConnection.sendPacket(new PacketPlayOutScoreboardScore(scoreboardScore11));
         playerConnection.sendPacket(new PacketPlayOutScoreboardScore(scoreboardScore12));
+        playerConnection.sendPacket(new PacketPlayOutScoreboardScore(scoreboardScore13));
+        playerConnection.sendPacket(new PacketPlayOutScoreboardScore(scoreboardScore14));
     }
 
 }

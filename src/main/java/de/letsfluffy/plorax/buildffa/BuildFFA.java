@@ -2,11 +2,12 @@ package de.letsfluffy.plorax.buildffa;
 
 import com.google.common.reflect.ClassPath;
 import de.letsfluffy.plorax.buildffa.commands.ForcemapCommand;
-import de.letsfluffy.plorax.buildffa.commands.StatsCommand;
+import de.letsfluffy.plorax.buildffa.events.Event;
 import de.letsfluffy.plorax.buildffa.game.GameManager;
 import de.letsfluffy.plorax.buildffa.maps.MapImporter;
 import de.letsfluffy.plorax.buildffa.mysql.StatsSQL;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -47,6 +48,17 @@ public class BuildFFA extends JavaPlugin {
     private final HashMap<Player, Player> combatLog = new HashMap<>();
     @Getter
     private final HashMap<Player, Integer> killstreak = new HashMap<>();
+
+    @Getter
+    @Setter
+    private int killCoins = 5;
+
+    @Getter
+    @Setter
+    private Event currentEvent = null;
+
+    @Getter
+    private final HashMap<String, Event> eventRegistry = new HashMap<>();
 
 
 

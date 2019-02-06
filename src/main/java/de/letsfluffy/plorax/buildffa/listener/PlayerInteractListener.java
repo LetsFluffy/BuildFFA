@@ -154,6 +154,10 @@ public class PlayerInteractListener implements Listener {
                 }
 
             }
+        } else if(event.getClickedBlock() != null) {
+            if(event.getClickedBlock().getType().equals(Material.BED_BLOCK)) {
+                event.setCancelled(true);
+            }
         }
     }
 }
