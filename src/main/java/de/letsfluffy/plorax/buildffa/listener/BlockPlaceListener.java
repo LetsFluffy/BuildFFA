@@ -1,6 +1,7 @@
 package de.letsfluffy.plorax.buildffa.listener;
 
 import de.letsfluffy.plorax.buildffa.BuildFFA;
+import de.letsfluffy.plorax.buildffa.buildblocks.BuildBlock;
 import lombok.Getter;
 import net.plorax.api.PloraxAPI;
 import org.bukkit.entity.Player;
@@ -33,6 +34,7 @@ public class BlockPlaceListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        getBuildFFA().getPlacedBlocks().put(event.getBlock(), 8);
+        getBuildFFA().getPlacedBlocks().put(event.getBlock(), new BuildBlock(event.getBlock(),
+                getBuildFFA().getOnlinePlayers().get(event.getPlayer()).getBuildBlocks()));
     }
 }

@@ -25,5 +25,8 @@ public class PlayerKickListener implements Listener {
     public void onPlayerKick(PlayerKickEvent event) {
         event.setCancelled(true);
         event.setLeaveMessage(null);
+        if(getBuildFFA().getOnlinePlayers().containsKey(event.getPlayer())) {
+            getBuildFFA().getOnlinePlayers().remove(event.getPlayer());
+        }
     }
 }

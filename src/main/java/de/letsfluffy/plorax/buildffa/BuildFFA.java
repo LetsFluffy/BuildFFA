@@ -1,11 +1,15 @@
 package de.letsfluffy.plorax.buildffa;
 
 import com.google.common.reflect.ClassPath;
+import de.letsfluffy.plorax.buildffa.buildblocks.BuildBlock;
+import de.letsfluffy.plorax.buildffa.buildblocks.BuildBlocks;
 import de.letsfluffy.plorax.buildffa.commands.ForcemapCommand;
 import de.letsfluffy.plorax.buildffa.events.Event;
 import de.letsfluffy.plorax.buildffa.game.GameManager;
+import de.letsfluffy.plorax.buildffa.kits.Kit;
 import de.letsfluffy.plorax.buildffa.maps.MapImporter;
 import de.letsfluffy.plorax.buildffa.mysql.StatsSQL;
+import de.letsfluffy.plorax.buildffa.utils.GamePlayer;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -17,7 +21,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * (c) by Frederic Kayser(2015-2019)
@@ -39,10 +45,7 @@ public class BuildFFA extends JavaPlugin {
     private GameManager gameManager;
 
     @Getter
-    private final HashMap<Block, Integer> placedBlocks = new HashMap<>();
-
-    @Getter
-    private final HashMap<Player, ItemStack[]> inventorys = new HashMap<>();
+    private final HashMap<Block, BuildBlock> placedBlocks = new HashMap<>();
 
     @Getter
     private final HashMap<Player, Player> combatLog = new HashMap<>();
@@ -59,6 +62,16 @@ public class BuildFFA extends JavaPlugin {
 
     @Getter
     private final HashMap<String, Event> eventRegistry = new HashMap<>();
+    @Getter
+    private final HashMap<Integer, Kit> kitRegistry = new HashMap<>();
+    @Getter
+    private final HashMap<Integer, BuildBlocks> buildBlockRegistry = new HashMap<>();
+
+    @Getter
+    private final HashMap<Player, GamePlayer> onlinePlayers = new HashMap<>();
+
+    @Getter
+    private final List<Integer> idsOfBlocks = new ArrayList<>();
 
 
 

@@ -1,7 +1,11 @@
 package de.letsfluffy.plorax.buildffa.game;
 
 import de.letsfluffy.plorax.buildffa.BuildFFA;
+import de.letsfluffy.plorax.buildffa.buildblocks.*;
 import de.letsfluffy.plorax.buildffa.events.DoubleCoinsEvent;
+import de.letsfluffy.plorax.buildffa.events.PowerEvent;
+import de.letsfluffy.plorax.buildffa.kits.Kit;
+import de.letsfluffy.plorax.buildffa.kits.KnockKit;
 import de.letsfluffy.plorax.buildffa.maps.MapImportData;
 import de.letsfluffy.plorax.buildffa.utils.ActionbarAPI;
 import de.letsfluffy.plorax.buildffa.utils.TitleAPI;
@@ -10,6 +14,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * (c) by Frederic Kayser(2015-2019)
@@ -28,6 +34,10 @@ public class GameManager {
 
     private int mapSwitchCounter = 0;
     private MapImportData mapImportData = null;
+    @Getter
+    private Inventory buildBlockInventory = null, kitInventory = null;
+
+
 
     public static void setup() {
 
@@ -36,13 +46,80 @@ public class GameManager {
         BuildFFA.getBuildFFA().getMapImporter().importMaps();
         BuildFFA.getBuildFFA().getMapImporter().selectRandomMap();
 
-        BuildFFA.getBuildFFA().getEventRegistry().put("DoubleCoins", new DoubleCoinsEvent());
+        BuildFFA.getBuildFFA().getGameManager().registerGameEvents();
+
+        BuildFFA.getBuildFFA().getGameManager().registerKits();
+        BuildFFA.getBuildFFA().getGameManager().createKitInventory();
+
+        BuildFFA.getBuildFFA().getGameManager().registerBuildBlocks();
+        BuildFFA.getBuildFFA().getGameManager().createBuildBlockInventory();
 
         BuildFFA.getBuildFFA().registerEvents();
         BuildFFA.getBuildFFA().registerCommands();
 
         BuildFFA.getBuildFFA().getGameManager().runBlockRemover();
 
+    }
+
+    public void registerGameEvents() {
+        BuildFFA.getBuildFFA().getEventRegistry().put("DoubleCoins", new DoubleCoinsEvent());
+        BuildFFA.getBuildFFA().getEventRegistry().put("Power", new PowerEvent());
+    }
+
+    public void registerKits() {
+        KnockKit knockKit = new KnockKit();
+
+        BuildFFA.getBuildFFA().getKitRegistry().put(knockKit.getId(), knockKit);
+    }
+
+    public void createKitInventory() {
+        int size = getBuildFFA().getKitRegistry().size();
+        while ((size % 9) != 0) {
+            size++;
+        }
+        kitInventory = Bukkit.createInventory(null, size, "§8» §aWähle ein Kit aus");
+        for(int i : getBuildFFA().getKitRegistry().keySet()) {
+            Kit kit = getBuildFFA().getKitRegistry().get(i);
+            getKitInventory().setItem(i, kit.getIcon());
+        }
+    }
+
+    public void registerBuildBlocks() {
+        SandstoneBlocks sandstoneBlocks = new SandstoneBlocks();
+        GlasBlocks glasBlocks = new GlasBlocks();
+        StoneBlocks stoneBlocks = new StoneBlocks();
+        DirtBlocks dirtBlocks = new DirtBlocks();
+        PrismarineBlocks prismarineBlocks = new PrismarineBlocks();
+        QuarzBlocks quarzBlocks = new QuarzBlocks();
+        ResourceBlocks resourceBlocks = new ResourceBlocks();
+        OreBlocks oreBlocks = new OreBlocks();
+        NetherBlocks netherBlocks = new NetherBlocks();
+
+        BuildFFA.getBuildFFA().getBuildBlockRegistry().put(sandstoneBlocks.getId(), sandstoneBlocks);
+        BuildFFA.getBuildFFA().getBuildBlockRegistry().put(glasBlocks.getId(), glasBlocks);
+        BuildFFA.getBuildFFA().getBuildBlockRegistry().put(stoneBlocks.getId(), stoneBlocks);
+        BuildFFA.getBuildFFA().getBuildBlockRegistry().put(dirtBlocks.getId(), dirtBlocks);
+        BuildFFA.getBuildFFA().getBuildBlockRegistry().put(prismarineBlocks.getId(), prismarineBlocks);
+        BuildFFA.getBuildFFA().getBuildBlockRegistry().put(quarzBlocks.getId(), quarzBlocks);
+        BuildFFA.getBuildFFA().getBuildBlockRegistry().put(resourceBlocks.getId(), resourceBlocks);
+        BuildFFA.getBuildFFA().getBuildBlockRegistry().put(oreBlocks.getId(), oreBlocks);
+        BuildFFA.getBuildFFA().getBuildBlockRegistry().put(netherBlocks.getId(), netherBlocks);
+    }
+
+    public void createBuildBlockInventory() {
+        int size = getBuildFFA().getBuildBlockRegistry().size();
+        while ((size % 9) != 0) {
+            size++;
+        }
+        buildBlockInventory = Bukkit.createInventory(null, size,"§8» §aWähle eine Blockart aus");
+        for(int i : getBuildFFA().getBuildBlockRegistry().keySet()) {
+            BuildBlocks buildBlocks = getBuildFFA().getBuildBlockRegistry().get(i);
+            getBuildBlockInventory().setItem(i, buildBlocks.getDefaultState());
+            BuildFFA.getBuildFFA().getIdsOfBlocks().add(buildBlocks.getDefaultState().getTypeId());
+            BuildFFA.getBuildFFA().getIdsOfBlocks().add(buildBlocks.getFirstState().getTypeId());
+            BuildFFA.getBuildFFA().getIdsOfBlocks().add(buildBlocks.getSecondState().getTypeId());
+            BuildFFA.getBuildFFA().getIdsOfBlocks().add(buildBlocks.getThirdState().getTypeId());
+        }
     }
 
     public static void endGame() {
@@ -56,22 +133,25 @@ public class GameManager {
             @Override
             public void run() {
                 for(Block block : getBuildFFA().getPlacedBlocks().keySet()) {
-                    int i = getBuildFFA().getPlacedBlocks().get(block);
+                    BuildBlock buildBlock = getBuildFFA().getPlacedBlocks().get(block);
+                    int i = buildBlock.getTime();
                     getBuildFFA().getPlacedBlocks().remove(block);
-                    i--;
+                    buildBlock.subtractTime();
                     //10-8: normal, 8-6: grün, 6-4: gelb, 4-2: rot;
                     if(i == 0) {
                         block.setType(Material.AIR);
                         continue;
                     } else if (i == 6) {
-                        block.setType(Material.STAINED_CLAY);
-                        block.setData((byte) 5);
+                        block.setType(buildBlock.getBuildBlocks().getFirstState().getType());
+                        block.setData(buildBlock.getBuildBlocks().getFirstState().getData().getData());
                     } else if(i == 4) {
-                        block.setData((byte) 4);
+                        block.setType(buildBlock.getBuildBlocks().getSecondState().getType());
+                        block.setData(buildBlock.getBuildBlocks().getSecondState().getData().getData());
                     } else if(i == 2) {
-                        block.setData((byte) 2);
+                        block.setType(buildBlock.getBuildBlocks().getThirdState().getType());
+                        block.setData(buildBlock.getBuildBlocks().getThirdState().getData().getData());
                     }
-                    getBuildFFA().getPlacedBlocks().put(block, i);
+                    getBuildFFA().getPlacedBlocks().put(block, buildBlock);
                 }
 
                 int mapSwitchMinutes = mapSwitchCounter / 60;

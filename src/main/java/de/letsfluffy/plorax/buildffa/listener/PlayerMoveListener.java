@@ -1,7 +1,7 @@
 package de.letsfluffy.plorax.buildffa.listener;
 
 import de.letsfluffy.plorax.buildffa.BuildFFA;
-import de.letsfluffy.plorax.buildffa.ItemStackBuilder;
+import de.letsfluffy.plorax.buildffa.utils.ItemStackBuilder;
 import de.letsfluffy.plorax.buildffa.utils.PacketScoreboard;
 import lombok.Getter;
 import net.plorax.api.PloraxAPI;
@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * (c) by Frederic Kayser(2015-2019)
@@ -78,14 +77,7 @@ public class PlayerMoveListener implements Listener {
                 player.sendMessage(getBuildFFA().getPrefix() + "§7Die wurde §a§l1 Coin §r§7abgezogen.");
             }
         } else if(player.getLocation().getY() == getBuildFFA().getMapImporter().getMap().getSpawnHigh()) {
-            player.getInventory().clear();
-            player.getInventory().setHelmet(ItemStackBuilder.getHelmet());
-            player.getInventory().setChestplate(ItemStackBuilder.getChestplate());
-            player.getInventory().setLeggings(ItemStackBuilder.getLeggings());
-            player.getInventory().setBoots(ItemStackBuilder.getBoots());
-            for(int i = 0; i < getBuildFFA().getInventorys().get(player).length; i++) {
-                player.getInventory().setItem(i, getBuildFFA().getInventorys().get(player)[i]);
-            }
+            getBuildFFA().getOnlinePlayers().get(player).selectKit(getBuildFFA().getOnlinePlayers().get(player).getSelectedKit());
         }
         PacketScoreboard.updateScoreboard(player);
     }

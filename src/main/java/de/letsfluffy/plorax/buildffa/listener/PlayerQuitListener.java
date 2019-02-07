@@ -27,5 +27,8 @@ public class PlayerQuitListener implements Listener {
         if(getBuildFFA().getCombatLog().containsKey(event.getPlayer())) {
             getBuildFFA().getCombatLog().remove(event.getPlayer());
         }
-    }
+        if(getBuildFFA().getOnlinePlayers().containsKey(event.getPlayer())) {
+            getBuildFFA().getOnlinePlayers().remove(event.getPlayer());
+        }
+     }
 }

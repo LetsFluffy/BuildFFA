@@ -1,10 +1,12 @@
 package de.letsfluffy.plorax.buildffa.mysql;
 
 import de.letsfluffy.plorax.buildffa.BuildFFA;
-import de.letsfluffy.plorax.buildffa.ItemStackBuilder;
+import de.letsfluffy.plorax.buildffa.buildblocks.BuildBlocks;
+import de.letsfluffy.plorax.buildffa.kits.Kit;
 import lombok.Getter;
 import net.plorax.api.PloraxAPI;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,7 +31,7 @@ public class StatsSQL {
     @Getter
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
-    private PreparedStatement createTable, insertUser, updateInventory, selectData;
+    private PreparedStatement createTable, insertUser, updateKits, updateLastKit, updateLastBlock, selectData;
 
     public StatsSQL(BuildFFA buildFFA) {
         this.buildFFA = buildFFA;
@@ -37,9 +39,11 @@ public class StatsSQL {
 
     public void prepareStatements() {
         try {
-            createTable = PloraxAPI.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS InventoryBuildFFA(UUID VARCHAR, INVENTORY VARCHAR(30))");
-            insertUser = PloraxAPI.getConnection().prepareStatement("INSERT INTO InventoryBuildFFA(UUID, INVENTORY)VALUES(?,?)");
-            updateInventory = PloraxAPI.getConnection().prepareStatement("UPDATE InventoryBuildFFA SET INVENTORY = ? WHERE UUID = ?");
+            createTable = PloraxAPI.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS InventoryBuildFFA(UUID VARCHAR(64), KITS MESSAGE_TEXT, LASTKIT INTEGER, LASTBLOCK INTEGER)");
+            insertUser = PloraxAPI.getConnection().prepareStatement("INSERT INTO InventoryBuildFFA(UUID, KITS, LASTKIT, LASTBLOCK)VALUES(?,?,?,?)");
+            updateKits = PloraxAPI.getConnection().prepareStatement("UPDATE InventoryBuildFFA SET KITS = ? WHERE UUID = ?");
+            updateLastKit = PloraxAPI.getConnection().prepareStatement("UPDATE InventoryBuildFFA SET LASTKIT WHERE UUID = ?");
+            updateLastBlock = PloraxAPI.getConnection().prepareStatement("UPDATE InventoryBuildFFA SET LASTBLOCK WHERE UUID = ?");
             selectData = PloraxAPI.getConnection().prepareStatement("SELECT * FROM InventoryBuildFFA WHERE UUID = ?");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -50,89 +54,239 @@ public class StatsSQL {
         try {
             createTable.close();
             insertUser.close();
-            updateInventory.close();
+            updateKits.close();
+            updateLastKit.close();
+            updateLastBlock.close();
             selectData.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
+    //-#-#-#-
     public void insertUser(UUID uuid) {
         try {
+            String defaultString = "";
+            for(int i = 0; i < getBuildFFA().getKitRegistry().size()-1; i++) {
+                String data = i + "-false-";
+                for(int j = 0; j < getBuildFFA().getKitRegistry().get(i).getDefaultItemsSorted().length; j++) {
+                    ItemStack itemStack = getBuildFFA().getKitRegistry().get(i).getDefaultItemsSorted()[j];
+                    String s1 = itemStack.getTypeId() + ":" + itemStack.getData().getData();
+                    data = data + s1 + ";";
+                }
+                data = data.substring(0, data.length()-1);
+                defaultString = defaultString + data + "#";
+
+            }
+            defaultString = defaultString.substring(0, defaultString.length()-1);
+            defaultString = defaultString.replaceFirst("false", "true");
             insertUser.setString(1, uuid.toString());
-            //1: Schwert, 2: Stick, 3: Angel, 4: Cobweb, 5: Rettungsplattform, 6: Sandstone, 7: Enderperle
-            insertUser.setString(2, "1;2;3;4;5;6;6;6;7");
+            insertUser.setString(2, defaultString);
+            insertUser.setInt(3, 0);
+            insertUser.setInt(4, 0);
             insertUser.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void updateInventory(UUID uuid, Inventory inventory) {
+    public void updateInventory(UUID uuid, Kit kit, Inventory inventory) {
 
         try {
-            updateInventory.setString(1, uuid.toString());
+            String rawKitString = getRawKitsString(uuid);
+            updateKits.setString(1, uuid.toString());
             String data = "";
             for(int i = 0; i < 8; i++) {
                 ItemStack itemStack = inventory.getItem(i);
-                String s = "";
-                if(itemStack.getType().equals(Material.GOLD_SWORD)) {
-                    s = "1";
-                } else if(itemStack.getType().equals(Material.STICK)) {
-                    s = "2";
-                } else if(itemStack.getType().equals(Material.FISHING_ROD)) {
-                    s = "3";
-                } else if(itemStack.getType().equals(Material.WEB)) {
-                    s = "4";
-                } else if(itemStack.getType().equals(Material.BLAZE_ROD)) {
-                    s = "5";
-                } else if(itemStack.getType().equals(Material.SANDSTONE)) {
-                    s = "6";
-                } else if(itemStack.getType().equals(Material.ENDER_PEARL)) {
-                    s = "7";
-                }
+                String s = itemStack.getTypeId() + ":" + itemStack.getData().getData();
                 data = data + s + ";";
             }
             data = data.substring(0, (data.length()-1));
-            updateInventory.setString(2, data);
-            updateInventory.executeUpdate();
+            data = kit.getId() + "-true-" + data;
+            String s = "";
+
+            String[] rawKitStringArray = rawKitString.split("#");
+            for(int i = 0; i < rawKitStringArray.length; i++) {
+                if(Integer.valueOf(rawKitStringArray[i].split("-")[0]) == kit.getId()) {
+                    s = s + data + "#";
+                } else {
+                    s = s + rawKitStringArray[i] + "#";
+                }
+            }
+
+            s = s.substring(0, (s.length()-1));
+
+            updateKits.setString(2, s);
+            updateKits.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public ItemStack[] getInventoryItems(UUID uuid) {
-        ItemStack[] itemStack = new ItemStack[8];
+    private String getRawKitsString(UUID uuid) {
         ResultSet resultSet = null;
         try {
             selectData.setString(1, uuid.toString());
             resultSet = selectData.executeQuery();
             if(resultSet.next()) {
-                String s = resultSet.getString("INVENTORY");
-                String[] array = s.split(";");
-                for(int i = 0; i < array.length; i++) {
-                    String s1 = array[i];
-                    if(s1.equalsIgnoreCase("1")) {
-                        itemStack[i] = ItemStackBuilder.getSword();
-                    } else if(s1.equalsIgnoreCase("2")) {
-                        itemStack[i] = ItemStackBuilder.getStick();
-                    } else if(s1.equalsIgnoreCase("3")) {
-                        itemStack[i] = ItemStackBuilder.getRod();
-                    } else if(s1.equalsIgnoreCase("4")) {
-                        itemStack[i] = ItemStackBuilder.getCobweb();
-                    } else if(s1.equalsIgnoreCase("5")) {
-                        itemStack[i] = ItemStackBuilder.getRescuePlatform();
-                    } else if(s1.equalsIgnoreCase("6")) {
-                        itemStack[i] = ItemStackBuilder.getSandstoneBlocks();
-                    } else if(s1.equalsIgnoreCase("7")) {
-                        itemStack[i] = ItemStackBuilder.getEnderpearl();
+                return resultSet.getString("KITS");
+            }
+        } catch (SQLException e) {
+
+        } finally {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+
+    public ItemStack[] getInventoryItems(UUID uuid, Kit kit) {
+        ItemStack[] itemStacks = new ItemStack[8];
+        ResultSet resultSet = null;
+        try {
+            selectData.setString(1, uuid.toString());
+            resultSet = selectData.executeQuery();
+            if(resultSet.next()) {
+                String s = resultSet.getString("KITS");
+                String[] kits = s.split("#");
+                String[] kitsNameArray = kits[kit.getId()].split("-");
+                String[] itemArray = kitsNameArray[2].split(";");
+                for(int i = 0; i < itemArray.length; i++) {
+                    String item = itemArray[i];
+                    int id = Integer.valueOf(item.split(":")[0]);
+                    int itemData = Integer.valueOf(item.split(":")[1]);
+                    ItemStack itemStack = null;
+                    Material type = Material.getMaterial(id);
+                    if(itemData != 0) {
+                        itemStack = new ItemStack(Material.valueOf(type.name()), 1, (short) itemData);
+                    } else {
+                        itemStack = new ItemStack(Material.valueOf(type.name()), 1);
                     }
+                    itemStacks[i] = itemStack;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return itemStack;
+        return itemStacks;
+    }
+
+    public boolean hasKitBought(UUID uuid, Kit kit) {
+        ResultSet resultSet = null;
+        try {
+            selectData.setString(1, uuid.toString());
+            resultSet = selectData.executeQuery();
+            if(resultSet.next()) {
+                String s = resultSet.getString("KITS");
+                String[] kitsArray = s.split("#");
+                for(int i = 0; i < kitsArray.length; i++) {
+                    if(Integer.valueOf(kitsArray[i].split("-")[0]) == kit.getId()) {
+                        boolean b = Boolean.valueOf(kitsArray[i].split("-")[1]);
+                        return b;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public void updateLastKit(UUID uuid, Kit kit) {
+        try {
+            updateLastKit.setString(1, uuid.toString());
+            updateLastKit.setInt(2, kit.getId());
+            updateLastKit.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getLastKit(UUID uuid) {
+        ResultSet resultSet = null;
+        try {
+            selectData.setString(1, uuid.toString());
+            resultSet = selectData.executeQuery();
+            if(resultSet.next()) {
+                return resultSet.getInt("LASTKIT");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    public void updateLastBuildBlock(UUID uuid, BuildBlocks buildBlocks) {
+        try {
+            updateLastKit.setString(1, uuid.toString());
+            updateLastKit.setInt(2, buildBlocks.getId());
+            updateLastKit.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getLastBuildBlock(UUID uuid) {
+        ResultSet resultSet = null;
+        try {
+            selectData.setString(1, uuid.toString());
+            resultSet = selectData.executeQuery();
+            if(resultSet.next()) {
+                return resultSet.getInt("LASTBLOCK");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    public void buyKit(UUID uuid, Kit kit) {
+        try {
+            String rawString = getRawKitsString(uuid);
+            String s = "";
+            String data = kit.getId() + "-true-";
+            for(int i = 0; i < kit.getDefaultItemsSorted().length; i++) {
+                ItemStack itemStack = kit.getDefaultItemsSorted()[i];
+                String s1 = itemStack.getTypeId() + ":" + itemStack.getData().getData();
+                data = data + s1 + ";";
+            }
+            data = data.substring(0, (data.length()-1));
+            String[] rawKitStringArray = rawString.split("#");
+            for(int i = 0; i < rawKitStringArray.length; i++) {
+                if(Integer.valueOf(rawKitStringArray[i].split("-")[0]) == kit.getId()) {
+                    s = s + data + "#";
+                } else {
+                    s = s + rawKitStringArray[i] + "#";
+                }
+            }
+
+            s = s.substring(0, (s.length()-1));
+
+            updateKits.setString(1, uuid.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isExisting(UUID uuid) {

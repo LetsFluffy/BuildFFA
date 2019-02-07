@@ -40,10 +40,10 @@ public class InventoryCloseListener implements Listener {
                 player.sendMessage(getBuildFFA().getPrefix() + "§cDu musst alle Items in das Inventar packen.");
                 return;
             } else {
-                getBuildFFA().getStatsSQL().updateInventory(player.getUniqueId(), inventory);
+                getBuildFFA().getStatsSQL().updateInventory(player.getUniqueId(), getBuildFFA().getOnlinePlayers().get(player).getSelectedKit(), inventory);
                 player.sendMessage(getBuildFFA().getPrefix() +"§aDein Inventar wurde erfolgreich geupdatet.");
-                getBuildFFA().getInventorys().remove(player);
-                getBuildFFA().getInventorys().put(player, getBuildFFA().getStatsSQL().getInventoryItems(player.getUniqueId()));
+                getBuildFFA().getOnlinePlayers().get(player).setItemStacks(getBuildFFA().getStatsSQL().getInventoryItems(player.getUniqueId(),
+                        getBuildFFA().getOnlinePlayers().get(player).getSelectedKit()));
             }
             });
         }

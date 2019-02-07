@@ -1,7 +1,7 @@
 package de.letsfluffy.plorax.buildffa.listener;
 
 import de.letsfluffy.plorax.buildffa.BuildFFA;
-import de.letsfluffy.plorax.buildffa.ItemStackBuilder;
+import de.letsfluffy.plorax.buildffa.utils.ItemStackBuilder;
 import de.letsfluffy.plorax.buildffa.utils.PacketScoreboard;
 import lombok.Getter;
 import net.plorax.api.PloraxAPI;
