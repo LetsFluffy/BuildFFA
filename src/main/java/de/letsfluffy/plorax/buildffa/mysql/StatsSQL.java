@@ -93,7 +93,7 @@ public class StatsSQL {
 
         try {
             String rawKitString = getRawKitsString(uuid);
-            updateKits.setString(1, uuid.toString());
+
             String data = "";
             for(int i = 0; i < 8; i++) {
                 ItemStack itemStack = inventory.getItem(i);
@@ -115,7 +115,8 @@ public class StatsSQL {
 
             s = s.substring(0, (s.length()-1));
 
-            updateKits.setString(2, s);
+            updateKits.setString(1, s);
+            updateKits.setString(2, uuid.toString());
             updateKits.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -203,8 +204,8 @@ public class StatsSQL {
 
     public void updateLastKit(UUID uuid, Kit kit) {
         try {
-            updateLastKit.setString(1, uuid.toString());
-            updateLastKit.setInt(2, kit.getId());
+            updateLastKit.setInt(1, kit.getId());
+            updateLastKit.setString(2, uuid.toString());
             updateLastKit.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -233,8 +234,8 @@ public class StatsSQL {
 
     public void updateLastBuildBlock(UUID uuid, BuildBlocks buildBlocks) {
         try {
-            updateLastKit.setString(1, uuid.toString());
-            updateLastKit.setInt(2, buildBlocks.getId());
+            updateLastKit.setInt(1, buildBlocks.getId());
+            updateLastKit.setString(2, uuid.toString());
             updateLastKit.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -284,6 +285,7 @@ public class StatsSQL {
             s = s.substring(0, (s.length()-1));
 
             updateKits.setString(1, uuid.toString());
+            updateKits.setString(2, s);
         } catch (SQLException e) {
             e.printStackTrace();
         }
