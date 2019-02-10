@@ -20,7 +20,7 @@ public class KnockKit implements Kit {
 
     @Override
     public int getId() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -37,7 +37,11 @@ public class KnockKit implements Kit {
         for(int i = 0; i < getDefaultItemsSorted().length; i++) {
             ItemStack itemStack1 = getDefaultItemsSorted()[i];
             ItemMeta itemMeta1 = itemStack1.getItemMeta();
-            lore.add("§8» §a" + itemStack1.getAmount() + "§7x §a" + itemMeta1.getDisplayName());
+            if(BuildFFA.getBuildFFA().getIdsOfBlocks().contains(itemStack1.getTypeId())) {
+                lore.add("§8» §a" + itemStack1.getAmount() + "§7x §aBlöcke");
+            } else {
+                lore.add("§8» §a" + itemStack1.getAmount() + "§7x §a" + itemMeta1.getDisplayName());
+            }
         }
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
@@ -57,7 +61,7 @@ public class KnockKit implements Kit {
 
         itemStacks[1] = new ItemStack(Material.ENDER_PEARL, 3);
         itemMetas[1] = itemStacks[1].getItemMeta();
-        itemMetas[1].setDisplayName("§aEine Perle der Natur");
+        itemMetas[1].setDisplayName("§aEnderperle");
         itemStacks[1].setItemMeta(itemMetas[1]);
 
         itemStacks[2] = new ItemStack(Material.FISHING_ROD);
@@ -107,7 +111,7 @@ public class KnockKit implements Kit {
                 int[] level = {4};
                 itemStacks[i] = ItemStackBuilder.modifyItemStack(itemStack, "§aSchlagstock", enchantments, level);
             } else if(itemStack.getType().equals(Material.ENDER_PEARL)) {
-                itemStacks[i] = ItemStackBuilder.modifyItemStack(itemStack,3,  "§aEine Perle der Natur");
+                itemStacks[i] = ItemStackBuilder.modifyItemStack(itemStack,3,  "§aEnderperle");
             } else if(itemStack.getType().equals(Material.FISHING_ROD)) {
                 itemStacks[i] = ItemStackBuilder.modifyItemStack(itemStack, "§aAngel");
             } else if(BuildFFA.getBuildFFA().getIdsOfBlocks().contains(itemStack.getTypeId())) {

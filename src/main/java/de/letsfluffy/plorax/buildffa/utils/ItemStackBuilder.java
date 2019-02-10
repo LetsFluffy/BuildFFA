@@ -2,6 +2,7 @@ package de.letsfluffy.plorax.buildffa.utils;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -20,12 +21,16 @@ public class ItemStackBuilder {
         for(int i = 0; i < enchantments.length; i++) {
             itemMeta.addEnchant(enchantments[i], level[i], true);
         }
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack modifyItemStack(ItemStack itemStack, String displayName) {
         ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         itemMeta.setDisplayName(displayName);
         itemMeta.spigot().setUnbreakable(true);
         itemStack.setItemMeta(itemMeta);
@@ -36,6 +41,8 @@ public class ItemStackBuilder {
         itemStack.setAmount(amount);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(displayName);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         itemMeta.spigot().setUnbreakable(true);
         itemStack.setItemMeta(itemMeta);
         return itemStack;
@@ -53,6 +60,8 @@ public class ItemStackBuilder {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(displayName);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         itemMeta.spigot().setUnbreakable(true);
         for(int i = 0; i < enchantments.length; i++) {
             itemMeta.addEnchant(enchantments[i], level[i], true);
@@ -64,6 +73,9 @@ public class ItemStackBuilder {
     public static ItemStack getHelmet(Material material) {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        itemMeta.spigot().setUnbreakable(true);
         itemMeta.setDisplayName("§aHelm");
         itemStack.setItemMeta(itemMeta);
         return itemStack;
@@ -72,6 +84,9 @@ public class ItemStackBuilder {
     public static ItemStack getChestplate(Material material) {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        itemMeta.spigot().setUnbreakable(true);
         itemMeta.setDisplayName("§aBrustplatte");
         itemStack.setItemMeta(itemMeta);
         return itemStack;
@@ -80,6 +95,9 @@ public class ItemStackBuilder {
     public static ItemStack getLeggings(Material material) {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        itemMeta.spigot().setUnbreakable(true);
         itemMeta.setDisplayName("§aHose");
         itemStack.setItemMeta(itemMeta);
         return itemStack;
@@ -88,6 +106,9 @@ public class ItemStackBuilder {
     public static ItemStack getBoots(Material material) {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        itemMeta.spigot().setUnbreakable(true);
         itemMeta.setDisplayName("§aSchuhe");
         itemStack.setItemMeta(itemMeta);
         return itemStack;
