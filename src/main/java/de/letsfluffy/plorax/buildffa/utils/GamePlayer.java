@@ -98,6 +98,7 @@ public class GamePlayer {
         getOwnedKits().add(kit);
         player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Du hast das Kit "
                 + kit.getIcon().getItemMeta().getDisplayName().substring(4) + " §7erfolgreich gekauft!");
+        PacketScoreboard.updateScoreboard(player);
     }
 
 }

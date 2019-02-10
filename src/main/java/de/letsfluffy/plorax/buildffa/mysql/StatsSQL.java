@@ -373,8 +373,10 @@ public class StatsSQL {
 
                 s = s.substring(0, (s.length() - 1));
 
-                updateKits.setString(1, uuid.toString());
-                updateKits.setString(2, s);
+
+                updateKits.setString(2, uuid.toString());
+                updateKits.setString(1, s);
+                updateKits.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
