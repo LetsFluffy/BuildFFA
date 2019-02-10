@@ -87,6 +87,7 @@ public class MapImporter {
         for(MapImportData mapImportData : getMaps()) {
             getForceMaps().put(current, mapImportData);
             getForceMapInventory().setItem(current, mapImportData.getItemStack());
+            current++;
         }
     }
 
@@ -99,8 +100,14 @@ public class MapImporter {
 
     public MapImportData selectNextRandomMap() {
         if(getMaps().size() > 0) {
-            int random = new Random().nextInt(getMaps().size());
-            return getMaps().get(random);
+            List<MapImportData> maps = new ArrayList<>();
+            for(MapImportData mapImportData : getMaps()) {
+                if(getMap() != mapImportData) {
+                    maps.add(mapImportData);
+                }
+            }
+            int random = new Random().nextInt(maps.size());
+            return maps.get(random);
         }
         return null;
     }

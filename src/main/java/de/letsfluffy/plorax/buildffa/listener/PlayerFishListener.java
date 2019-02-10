@@ -44,9 +44,9 @@ public class PlayerFishListener implements Listener {
                     double g = -0.08D;
                     double d = to.distance(lc);
                     double t = d;
-                    double v_x = (1.0D + 0.70000000000000001D * t) * (to.getX() - lc.getX()) / t;
-                    double v_y = (1.0D + 0.1D * t) * (to.getY() - lc.getY()) / t - 0.5D * g * t;
-                    double v_z = (1.0D + 0.70000000000000001D * t) * (to.getZ() - lc.getZ()) / t;
+                    double v_x = (1.0D + 0.50000000000000001D * t) * (to.getX() - lc.getX()) / t;
+                    double v_y = (1.0D + 0.3D * t) * (to.getY() - lc.getY()) / t - 0.5D * g * t;
+                    double v_z = (1.0D + 0.50000000000000001D * t) * (to.getZ() - lc.getZ()) / t;
 
                     Vector v = p.getVelocity();
                     v.setX(v_x);

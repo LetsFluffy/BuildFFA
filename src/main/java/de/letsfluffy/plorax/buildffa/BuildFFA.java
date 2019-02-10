@@ -39,7 +39,7 @@ public class BuildFFA extends JavaPlugin {
     @Getter
     private static BuildFFA buildFFA;
     @Getter
-    private String prefix = "§a§lBuild§2§lFFA §8| ";
+    private String prefix = "§2§lBuild§a§lFFA §8| ";
     @Getter
     private MapImporter mapImporter;
     @Getter
@@ -116,7 +116,7 @@ public class BuildFFA extends JavaPlugin {
     }
 
     public void registerCommands() {
-        new ForcemapCommand(this);
+        //new ForcemapCommand(this);
         new EventCommand(this);
     }
 

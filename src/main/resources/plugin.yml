@@ -5,5 +5,4 @@ version: 1.0-BETA
 main: de.letsfluffy.plorax.buildffa.BuildFFA
 
 commands:
-  forcemap:
   event:

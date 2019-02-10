@@ -18,7 +18,7 @@ public class QuarzBlocks implements BuildBlocks {
 
     @Override
     public ItemStack getDefaultState() {
-        return ItemStackBuilder.getBuildBlock(Material.QUARTZ_BLOCK, 64, 2, "Quarz");
+        return ItemStackBuilder.getBuildBlock(Material.QUARTZ_BLOCK, 64, 0, "Quarz");
     }
 
     @Override

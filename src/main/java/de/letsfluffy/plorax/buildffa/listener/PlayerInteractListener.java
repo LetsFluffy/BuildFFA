@@ -75,8 +75,15 @@ public class PlayerInteractListener implements Listener {
                 inventory.setItem(11, kits);
                 inventory.setItem(15, blocks);
                 player.openInventory(inventory);
-            } else if(event.getItem().getType().equals(Material.BLAZE_ROD)) {
-                player.getInventory().remove(event.getItem());
+            } else if(event.getItem().getType().equals(Material.BLAZE_ROD)&& event.getClickedBlock() == null) {
+                event.setCancelled(true);
+                ItemStack itemStack = player.getInventory().getItemInHand();
+                itemStack.setAmount(itemStack.getAmount()-1);
+                if(itemStack.getAmount() == 0) {
+                    player.getInventory().remove(player.getInventory().getItemInHand());
+                } else {
+                    player.getInventory().setItemInHand(itemStack);
+                }
                 Location location = player.getLocation();
                 location.setY(location.getY() - 5);
 

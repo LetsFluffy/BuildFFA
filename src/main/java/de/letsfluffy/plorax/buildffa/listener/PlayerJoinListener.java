@@ -5,6 +5,7 @@ import de.letsfluffy.plorax.buildffa.utils.GamePlayer;
 import de.letsfluffy.plorax.buildffa.utils.ItemStackBuilder;
 import de.letsfluffy.plorax.buildffa.utils.PacketScoreboard;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,9 +44,14 @@ public class PlayerJoinListener implements Listener {
             player.setGameMode(GameMode.SURVIVAL);
             player.sendMessage(getBuildFFA().getPrefix() + "§a§lTeaming §r§7ist bis zu einer §a§lGröße §r§7von §a§l3er Teams §r§7erlaubt.");
             PacketScoreboard.updateScoreboard(player);
+            for(Player player1 : Bukkit.getOnlinePlayers()) {
+                player1.hidePlayer(player);
+                player1.showPlayer(player);
+            }
             player.getActivePotionEffects().forEach(potionEffect -> {
                 player.removePotionEffect(potionEffect.getType());
             });
+            getBuildFFA().getKillstreak().put(player, 0);
             if(getBuildFFA().getCurrentEvent() != null) {
                 if (getBuildFFA().getCurrentEvent().equals(getBuildFFA().getEventRegistry().get("Power"))) {
                     player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 3));

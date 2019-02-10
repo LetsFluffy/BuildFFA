@@ -95,7 +95,6 @@ public class StatsSQL {
                     defaultString = defaultString + data + "#";
 
                 }
-                System.out.println(defaultString);
                 defaultString = defaultString.substring(0, defaultString.length() - 1);
                 kitsString = kitsString + defaultString;
 
@@ -165,7 +164,6 @@ public class StatsSQL {
                     defaultString = defaultString + data + "#";
 
                 }
-                System.out.println(defaultString);
                 defaultString = defaultString.substring(0, defaultString.length() - 1);
                 defaultString = defaultString.replaceFirst("false", "true");
                 insertUser.setString(1, uuid.toString());

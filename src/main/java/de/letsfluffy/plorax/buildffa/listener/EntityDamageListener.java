@@ -24,6 +24,9 @@ public class EntityDamageListener implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        event.setCancelled(true);
+        if(!(event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) || event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK))) {
+            event.setCancelled(true);
+        }
+
     }
 }

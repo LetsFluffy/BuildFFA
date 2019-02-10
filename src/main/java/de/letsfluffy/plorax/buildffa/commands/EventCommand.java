@@ -55,7 +55,7 @@ public class EventCommand implements CommandExecutor {
                                 player.sendMessage(getBuildFFA().getPrefix() + "§cDieses Event existiert nicht.");
                             }
                         } else {
-                            player.sendMessage(getBuildFFA().getPrefix() + "§cEs läuft bereit das §a§l" + getBuildFFA().getCurrentEvent().getName() + " §7Event.");
+                            player.sendMessage(getBuildFFA().getPrefix() + "§cEs läuft bereit das §a§l" + getBuildFFA().getCurrentEvent().getName() + " §cEvent.");
                         }
                     } else {
                         sendHelp(player);

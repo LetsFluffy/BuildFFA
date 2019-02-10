@@ -10,19 +10,25 @@ import de.letsfluffy.plorax.buildffa.kits.KnockKit;
 import de.letsfluffy.plorax.buildffa.maps.MapImportData;
 import de.letsfluffy.plorax.buildffa.utils.ActionbarAPI;
 import de.letsfluffy.plorax.buildffa.utils.ItemStackBuilder;
+import de.letsfluffy.plorax.buildffa.utils.PacketScoreboard;
 import de.letsfluffy.plorax.buildffa.utils.TitleAPI;
 import lombok.Getter;
 import lombok.Setter;
 import net.plorax.api.PloraxAPI;
+import net.plorax.api.StatsAPI;
+import net.plorax.api.util.PloraxPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.util.Vector;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 /**
  * (c) by Frederic Kayser(2015-2019)
@@ -73,7 +79,9 @@ public class GameManager {
         BuildFFA.getBuildFFA().getGameManager().setJoinable(true);
 
         BuildFFA.getBuildFFA().getGameManager().sendMapInformation();
+        BuildFFA.getBuildFFA().getGameManager().runRescuePlatformHelper();
         BuildFFA.getBuildFFA().getGameManager().runBlockRemover();
+        BuildFFA.getBuildFFA().getGameManager().runItemGiver();
 
     }
 
@@ -157,13 +165,12 @@ public class GameManager {
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(getBuildFFA(), new Runnable() {
             @Override
             public void run() {
-
-                int mapSwitchMinutes = mapSwitchCounter / 60;
-                int mapSwitchSeconds = mapSwitchCounter % 60;
                 String message = "§cKeine Daten gefunden";
                 if(mapImportData != null && getBuildFFA().getMapImporter().getMaps().size() > 1) {
-                    message = "§7Nächste §aMap §r§8» §a§l" + mapImportData.getDisplayName() + " §r §8| §a"
-                            + mapSwitchMinutes + "§7:§a" + (mapSwitchSeconds < 10 ? "0" + mapSwitchMinutes : mapSwitchSeconds);
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+                    String date = simpleDateFormat.format(mapSwitchCounter*1000);
+                    message = "§7Nächste Map §r§8» §a§l" + mapImportData.getDisplayName() + "§r §8| §a" +
+                            date.split(":")[0] + "§7:§a" + date.split(":")[1];
 
 
                     for (Player player : Bukkit.getOnlinePlayers()) {
@@ -182,6 +189,7 @@ public class GameManager {
                             player.getInventory().setItem(0, ItemStackBuilder.getSpawnItems()[0]);
                             player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[1]);
                             player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[2]);
+                            PacketScoreboard.updateScoreboard(player);
                         }
                         startMapSwitch(60 * 10, getBuildFFA().getMapImporter().selectNextRandomMap());
                     } else {
@@ -194,18 +202,107 @@ public class GameManager {
                         }
                         if (mapSwitchCounter == 10 || mapSwitchCounter == 3) {
                             for (Player player : Bukkit.getOnlinePlayers()) {
-                                TitleAPI.sendTitle(player, 10, 30, 10, mapImportData.getDisplayName(), mapImportData.getCreator());
+                                TitleAPI.sendTitle(player, 10, 30, 10, "§8» §a§l" + mapImportData.getDisplayName(),
+                                        "§7by §8» §a" + mapImportData.getCreator());
                             }
                         }
                     }
                 } else {
-                    message = "§7Aktuelle §aMap §r§8» §a§l" + getBuildFFA().getMapImporter().getMap().getDisplayName();
+                    message = "§7Aktuelle Map §r§8» §a§l" + getBuildFFA().getMapImporter().getMap().getDisplayName();
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         ActionbarAPI.sendActionbar(player, message);
                     }
                 }
             }
         }, 20, 20);
+    }
+
+    public void runRescuePlatformHelper() {
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(getBuildFFA(), new Runnable() {
+            @Override
+            public void run() {
+                for(Player player : Bukkit.getOnlinePlayers()) {
+                    if(player.getLocation().subtract(0, 1, 0).getBlock().getType().equals(Material.HAY_BLOCK)) {
+                        final Vector vector = new Vector();
+
+                        final double aDouble = -0.08D;
+                        final double distance = player.getLocation().distance(player.getLocation().add(0, 7, 0));
+
+                        final double vecY = (1D + 0.03D * distance) * (player.getLocation().add(0, 7, 0).getY()
+                                - player.getLocation().getY()) / distance - 0.5D * aDouble * distance;
+
+                        vector.setY(vecY);
+
+                        player.setVelocity(vector);
+                    }
+                }
+            }
+        }, 1, 1);
+    }
+
+    public void runItemGiver() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(getBuildFFA(), new Runnable() {
+            @Override
+            public void run() {
+               for(Player player : Bukkit.getOnlinePlayers()) {
+                   if(player.getLocation().getY() <= getBuildFFA().getMapImporter().getMap().getDieHigh()) {
+                       player.teleport(getBuildFFA().getMapImporter().getMap().getSpawn());
+                       player.getInventory().clear();
+                       player.getInventory().setArmorContents(null);
+                       player.getInventory().setItem(0, ItemStackBuilder.getSpawnItems()[0]);
+                       player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[1]);
+                       player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[2]);
+
+                       getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
+                           long[] l = new long[2];
+                           l[0] = 0;
+                           l[1] = 1;
+                           PloraxAPI.getStatsAPI().addStats(player.getUniqueId(), StatsAPI.StatsGameMode.BUILDFFA, l);
+                           PloraxAPI.getCoinAPI().subtractCoins(player.getUniqueId(), 1);
+                       });
+
+                       if(getBuildFFA().getCombatLog().containsKey(player)) {
+                           Player killer = getBuildFFA().getCombatLog().get(player);
+                           getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
+                               PloraxAPI.getCoinAPI().addCoins(killer.getUniqueId(), getBuildFFA().getKillCoins());
+                               long[] l = new long[2];
+                               l[0] = 1;
+                               l[1] = 0;
+                               PloraxAPI.getStatsAPI().addStats(killer.getUniqueId(), StatsAPI.StatsGameMode.BUILDFFA, l);
+                           });
+                           getBuildFFA().getCombatLog().remove(player);
+                           getBuildFFA().getKillstreak().remove(player);
+                           getBuildFFA().getKillstreak().put(player, 0);
+                           int kills = getBuildFFA().getKillstreak().get(killer);
+                           kills++;
+                           if((kills == 3) || ((kills % 5) == 0)) {
+                               for(Player player1 : Bukkit.getOnlinePlayers()) {
+                                   player1.sendMessage(getBuildFFA().getPrefix() + new PloraxPlayer(killer.getUniqueId()).getPrefixName()
+                                           + " §7hat eine §a§l" + kills + "er§r §7Killstreak!");
+                               }
+                           }
+                           getBuildFFA().getKillstreak().remove(killer);
+                           getBuildFFA().getKillstreak().put(killer, kills);
+                           killer.sendMessage(getBuildFFA().getPrefix() + "§7Du hast " + new PloraxPlayer(player.getUniqueId()).getPrefixName() + " §7getötet.");
+                           killer.setHealth(20);
+                           player.sendMessage(getBuildFFA().getPrefix() + "§7Du wurdest von " + new PloraxPlayer(killer.getUniqueId()).getPrefixName() + " §7getötet.");
+                           PacketScoreboard.updateScoreboard(killer);
+                       } else {
+                           player.sendMessage(getBuildFFA().getPrefix() + "§7Du bist gestorben.");
+                       }
+                       getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(true);
+                       PacketScoreboard.updateScoreboard(player);
+                   } else if(player.getLocation().getY() <= getBuildFFA().getMapImporter().getMap().getSpawnHigh() &&
+                           getBuildFFA().getOnlinePlayers().get(player).isInSpawnArea()) {
+                       getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(false);
+                       player.getInventory().clear();
+                       player.getInventory().setArmorContents(getBuildFFA().getOnlinePlayers().get(player).getSelectedKit().getArmorContents());
+
+                       getBuildFFA().getOnlinePlayers().get(player).getKit();
+                   }
+               }
+            }
+        }, 1, 1);
     }
 
     public void runBlockRemover() {
