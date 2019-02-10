@@ -4,7 +4,7 @@ import de.letsfluffy.plorax.buildffa.BuildFFA;
 import de.letsfluffy.plorax.buildffa.buildblocks.BuildBlock;
 import lombok.Getter;
 import net.plorax.api.PloraxAPI;
-import org.bukkit.entity.Player;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -29,12 +29,15 @@ public class BlockPlaceListener implements Listener {
         if(PloraxAPI.getSpecPlayers().containsKey(event.getPlayer())) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(getBuildFFA().getPrefix() + "§cIm SpecModus kannst du keine Blöcke platzieren.");
-            return;
-        } else if(getBuildFFA().getMapImporter().getMap().getSpawnHigh() >= event.getBlock().getLocation().getY()) {
+        } else if(getBuildFFA().getMapImporter().getMap().getSpawnHigh() <= event.getBlock().getLocation().getY()) {
             event.setCancelled(true);
-            return;
+        } else {
+            if(getBuildFFA().getPlacedBlocks().containsKey(event.getBlock().getLocation())) {
+                getBuildFFA().getPlacedBlocks().remove(event.getBlock().getLocation());
+            }
+            event.setCancelled(false);
+            getBuildFFA().getPlacedBlocks().put(event.getBlock().getLocation(), new BuildBlock(event.getBlock(),
+                    getBuildFFA().getOnlinePlayers().get(event.getPlayer()).getBuildBlocks(), (event.getBlock().getType().equals(Material.WEB) ? false : true)));
         }
-        getBuildFFA().getPlacedBlocks().put(event.getBlock(), new BuildBlock(event.getBlock(),
-                getBuildFFA().getOnlinePlayers().get(event.getPlayer()).getBuildBlocks()));
     }
 }

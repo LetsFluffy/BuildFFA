@@ -3,6 +3,7 @@ package de.letsfluffy.plorax.buildffa;
 import com.google.common.reflect.ClassPath;
 import de.letsfluffy.plorax.buildffa.buildblocks.BuildBlock;
 import de.letsfluffy.plorax.buildffa.buildblocks.BuildBlocks;
+import de.letsfluffy.plorax.buildffa.commands.EventCommand;
 import de.letsfluffy.plorax.buildffa.commands.ForcemapCommand;
 import de.letsfluffy.plorax.buildffa.events.Event;
 import de.letsfluffy.plorax.buildffa.game.GameManager;
@@ -13,6 +14,7 @@ import de.letsfluffy.plorax.buildffa.utils.GamePlayer;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -21,6 +23,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +39,7 @@ public class BuildFFA extends JavaPlugin {
     @Getter
     private static BuildFFA buildFFA;
     @Getter
-    private String prefix = "§a§lBuild§6§lFFA";
+    private String prefix = "§a§lBuild§2§lFFA §8| ";
     @Getter
     private MapImporter mapImporter;
     @Getter
@@ -45,7 +48,7 @@ public class BuildFFA extends JavaPlugin {
     private GameManager gameManager;
 
     @Getter
-    private final HashMap<Block, BuildBlock> placedBlocks = new HashMap<>();
+    private final HashMap<Location, BuildBlock> placedBlocks = new HashMap<>();
 
     @Getter
     private final HashMap<Player, Player> combatLog = new HashMap<>();
@@ -99,10 +102,14 @@ public class BuildFFA extends JavaPlugin {
                 Class clazz = Class.forName(ci.getName());
 
                 if (Listener.class.isAssignableFrom(clazz)) {
-                    pm.registerEvents((Listener) clazz.newInstance(), this);
+                    pm.registerEvents((Listener) clazz.getConstructor(BuildFFA.class).newInstance(this), this);
                 }
             }
         } catch (IOException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
 
@@ -110,6 +117,7 @@ public class BuildFFA extends JavaPlugin {
 
     public void registerCommands() {
         new ForcemapCommand(this);
+        new EventCommand(this);
     }
 
 

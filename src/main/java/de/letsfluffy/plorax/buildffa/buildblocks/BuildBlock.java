@@ -15,12 +15,14 @@ public class BuildBlock {
 
     private Block block;
     private final BuildBlocks buildBlocks;
+    private final boolean changeBlock;
     @Setter
-    private int time = 8;
+    private int time = 8*20;
 
-    public BuildBlock(Block block, BuildBlocks buildBlocks) {
+    public BuildBlock(Block block, BuildBlocks buildBlocks, boolean changeBlock) {
         this.block = block;
         this.buildBlocks = buildBlocks;
+        this.changeBlock = changeBlock;
     }
 
     public void subtractTime() {

@@ -23,7 +23,7 @@ public class PowerEvent implements Event {
     public void start() {
         BuildFFA.getBuildFFA().setCurrentEvent(this);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Das §a§l" + getName() + " §7wurde gestartet.");
+            player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Das §a§l" + getName() + " §7Event wurde gestartet.");
             player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 3));
             PacketScoreboard.updateScoreboard(player);
         }
@@ -33,7 +33,7 @@ public class PowerEvent implements Event {
     public void stop() {
         BuildFFA.getBuildFFA().setCurrentEvent(null);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Das §a§l" + getName() + " §7wurde beendet.");
+            player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Das §a§l" + getName() + " §7Event wurde beendet.");
             player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
             PacketScoreboard.updateScoreboard(player);
         }

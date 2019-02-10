@@ -30,29 +30,35 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        event.setJoinMessage(null);
-        player.teleport(getBuildFFA().getMapImporter().getMap().getSpawn());
-        player.getInventory().clear();
-        player.getInventory().setArmorContents(null);
-        player.getInventory().setItem(0, ItemStackBuilder.getSpawnItems()[0]);
-        player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[1]);
-        player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[2]);
-        player.setHealth(20);
-        player.setGameMode(GameMode.SURVIVAL);
-        player.sendMessage(getBuildFFA().getPrefix() + "§a§lTeaming §r§7ist bis zu einer §a§lGröße §r§7von §a§l3er Teams §r§7erlaubt.");
-        PacketScoreboard.updateScoreboard(player);
-        player.getActivePotionEffects().forEach(potionEffect -> {
-            player.removePotionEffect(potionEffect.getType());
-        });
-        if(getBuildFFA().getCurrentEvent().equals(getBuildFFA().getEventRegistry().get("Power"))) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 3));
-        }
-        getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
-            if(!getBuildFFA().getStatsSQL().isExisting(player.getUniqueId())) {
-                getBuildFFA().getStatsSQL().insertUser(player.getUniqueId());
+        if(getBuildFFA().getGameManager().isJoinable()) {
+            Player player = event.getPlayer();
+            event.setJoinMessage(null);
+            player.teleport(getBuildFFA().getMapImporter().getMap().getSpawn());
+            player.getInventory().clear();
+            player.getInventory().setArmorContents(null);
+            player.getInventory().setItem(0, ItemStackBuilder.getSpawnItems()[0]);
+            player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[1]);
+            player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[2]);
+            player.setHealth(20);
+            player.setGameMode(GameMode.SURVIVAL);
+            player.sendMessage(getBuildFFA().getPrefix() + "§a§lTeaming §r§7ist bis zu einer §a§lGröße §r§7von §a§l3er Teams §r§7erlaubt.");
+            PacketScoreboard.updateScoreboard(player);
+            player.getActivePotionEffects().forEach(potionEffect -> {
+                player.removePotionEffect(potionEffect.getType());
+            });
+            if(getBuildFFA().getCurrentEvent() != null) {
+                if (getBuildFFA().getCurrentEvent().equals(getBuildFFA().getEventRegistry().get("Power"))) {
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 3));
+                }
             }
-            getBuildFFA().getOnlinePlayers().put(player, new GamePlayer(player));
-        });
+            getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
+                if (!getBuildFFA().getStatsSQL().isExisting(player.getUniqueId())) {
+                    getBuildFFA().getStatsSQL().insertUser(player.getUniqueId());
+                }
+                getBuildFFA().getOnlinePlayers().put(player, new GamePlayer(player));
+            });
+        } else {
+            event.getPlayer().kickPlayer("§cServer is not ready! Please wait a short time");
+        }
     }
 }

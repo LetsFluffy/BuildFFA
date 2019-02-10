@@ -25,7 +25,7 @@ public class DoubleCoinsEvent implements Event {
         BuildFFA.getBuildFFA().setKillCoins(BuildFFA.getBuildFFA().getKillCoins() * 2);
         BuildFFA.getBuildFFA().setCurrentEvent(this);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Das §a§l" + getName() + " §7wurde gestartet.");
+            player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Das §a§l" + getName() + " §7Event wurde gestartet.");
             PacketScoreboard.updateScoreboard(player);
         }
 
@@ -36,7 +36,7 @@ public class DoubleCoinsEvent implements Event {
         BuildFFA.getBuildFFA().setKillCoins(5);
         BuildFFA.getBuildFFA().setCurrentEvent(null);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Das §a§l" + getName() + " §7wurde beendet.");
+            player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Das §a§l" + getName() + " §7Event wurde beendet.");
             PacketScoreboard.updateScoreboard(player);
         }
 

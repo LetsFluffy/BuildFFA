@@ -1,6 +1,7 @@
 package de.letsfluffy.plorax.buildffa.listener;
 
 import de.letsfluffy.plorax.buildffa.BuildFFA;
+import de.letsfluffy.plorax.buildffa.kits.Kit;
 import de.letsfluffy.plorax.buildffa.utils.ItemStackBuilder;
 import de.letsfluffy.plorax.buildffa.utils.PacketScoreboard;
 import lombok.Getter;
@@ -30,12 +31,13 @@ public class PlayerMoveListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if(player.getLocation().getY() <= 0) {
+        if(player.getLocation().getY() <= getBuildFFA().getMapImporter().getMap().getDieHigh()) {
             player.teleport(getBuildFFA().getMapImporter().getMap().getSpawn());
             player.getInventory().clear();
             player.getInventory().setArmorContents(null);
-            player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[0]);
-            player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[1]);
+            player.getInventory().setItem(0, ItemStackBuilder.getSpawnItems()[0]);
+            player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[1]);
+            player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[2]);
 
             getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
                 long[] l = new long[2];
@@ -76,9 +78,15 @@ public class PlayerMoveListener implements Listener {
                 player.sendMessage(getBuildFFA().getPrefix() + "§7Du bist gestorben.");
                 player.sendMessage(getBuildFFA().getPrefix() + "§7Die wurde §a§l1 Coin §r§7abgezogen.");
             }
-        } else if(player.getLocation().getY() == getBuildFFA().getMapImporter().getMap().getSpawnHigh()) {
-            getBuildFFA().getOnlinePlayers().get(player).selectKit(getBuildFFA().getOnlinePlayers().get(player).getSelectedKit());
+            getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(true);
+            PacketScoreboard.updateScoreboard(player);
+        } else if(player.getLocation().getY() <= getBuildFFA().getMapImporter().getMap().getSpawnHigh() &&
+                getBuildFFA().getOnlinePlayers().get(player).isInSpawnArea()) {
+            getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(false);
+            player.getInventory().clear();
+            player.getInventory().setArmorContents(getBuildFFA().getOnlinePlayers().get(player).getSelectedKit().getArmorContents());
+
+            getBuildFFA().getOnlinePlayers().get(player).getKit();
         }
-        PacketScoreboard.updateScoreboard(player);
     }
 }

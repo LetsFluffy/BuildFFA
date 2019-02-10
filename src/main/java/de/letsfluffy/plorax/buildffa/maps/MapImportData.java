@@ -20,17 +20,18 @@ public class MapImportData {
 
     private final String name, displayName, creator;
     private String itemID;
-    private final int spawnHigh;
+    private final int spawnHigh, dieHigh;
     private final Location spawn;
 
     private ItemStack itemStack;
 
-    public MapImportData(String name, String displayName, String creator, String itemID, int spawnHigh, Location spawn) {
+    public MapImportData(String name, String displayName, String creator, String itemID, int spawnHigh, int dieHigh, Location spawn) {
         this.name = name;
         this.displayName = displayName;
         this.creator = creator;
         this.itemID = itemID;
         this.spawnHigh = spawnHigh;
+        this.dieHigh = dieHigh;
         this.spawn = spawn;
         if(itemID == null) {
             this.itemID = "1;0";

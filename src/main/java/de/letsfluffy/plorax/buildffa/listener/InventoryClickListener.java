@@ -14,7 +14,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * (c) by Frederic Kayser(2015-2019)
@@ -53,39 +55,44 @@ public class InventoryClickListener implements Listener {
             } else if (event.getClickedInventory().getTitle().equalsIgnoreCase("§8» §aWähle eine Kategorie")) {
                 event.setCancelled(true);
 
-                getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
-                    GamePlayer gamePlayer = getBuildFFA().getOnlinePlayers().get(player);
-                    if (event.getCurrentItem() != null) {
-                        if (event.getSlot() == 11) {
-                            Inventory inventory = getBuildFFA().getGameManager().getKitInventory();
-                            for (int i = 0; i < inventory.getSize() - 1; i++) {
-                                ItemStack itemStack = inventory.getItem(i);
-                                Kit kit = getBuildFFA().getKitRegistry().get(i);
-                                if (gamePlayer.hasKitBought(kit)) {
-                                    itemStack.getItemMeta().setDisplayName(itemStack.getItemMeta().getDisplayName() + " §7(§eGekauft§7)");
-                                    if (gamePlayer.getSelectedKit().equals(kit)) {
-                                        itemStack.getItemMeta().addEnchant(Enchantment.DURABILITY, 1, false);
-                                    }
-                                } else {
-                                    itemStack.getItemMeta().setDisplayName(itemStack.getItemMeta().getDisplayName() + " §7(§e" + kit.getPrice() + " Coins§7)");
+                GamePlayer gamePlayer = getBuildFFA().getOnlinePlayers().get(player);
+                if (event.getCurrentItem() != null) {
+                    if (event.getSlot() == 11) {
+                        Inventory inventory = getBuildFFA().getGameManager().createKitInventory();
+                        for (int i = 0; i < getBuildFFA().getKitRegistry().size(); i++) {
+                            ItemStack itemStack = inventory.getItem(i);
+                            Kit kit = getBuildFFA().getKitRegistry().get(i);
+                            ItemMeta itemMeta = itemStack.getItemMeta();
+                            if (gamePlayer.ownKit(kit)) {
+                                itemMeta.setDisplayName(itemMeta.getDisplayName() + " §7(§eGekauft§7)");
+                                if (gamePlayer.getSelectedKit().equals(kit)) {
+                                    itemMeta.addEnchant(Enchantment.DURABILITY, 1, true);
+                                    itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                                 }
-                                inventory.setItem(i, itemStack);
+                            } else {
+                                itemMeta.setDisplayName(itemMeta.getDisplayName() + " §7(§e" + kit.getPrice() + " Coins§7)");
                             }
-                            player.openInventory(inventory);
-                        } else if (event.getSlot() == 15) {
-                            Inventory inventory = getBuildFFA().getGameManager().getBuildBlockInventory();
-                            for (int i = 0; i < inventory.getSize(); i++) {
-                                ItemStack itemStack = inventory.getItem(i);
-                                BuildBlocks buildBlocks = getBuildFFA().getBuildBlockRegistry().get(i);
-                                if (gamePlayer.getBuildBlocks().equals(buildBlocks)) {
-                                    itemStack.getItemMeta().addEnchant(Enchantment.DURABILITY, 1, false);
-                                }
-                                inventory.setItem(i, itemStack);
-                            }
-                            player.openInventory(inventory);
+                            itemStack.setItemMeta(itemMeta);
+                            inventory.setItem(i, itemStack);
                         }
+                        player.openInventory(inventory);
+                    } else if (event.getSlot() == 15) {
+                        Inventory inventory = getBuildFFA().getGameManager().createBuildBlockInventory();
+                        for (int i = 0; i < inventory.getSize(); i++) {
+                            ItemStack itemStack = inventory.getItem(i);
+                            itemStack.setAmount(1);
+                            BuildBlocks buildBlocks = getBuildFFA().getBuildBlockRegistry().get(i);
+                            ItemMeta itemMeta = itemStack.getItemMeta();
+                            if (gamePlayer.getBuildBlocks().equals(buildBlocks)) {
+                                itemMeta.addEnchant(Enchantment.DURABILITY, 1, true);
+                                itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                            }
+                            itemStack.setItemMeta(itemMeta);
+                            inventory.setItem(i, itemStack);
+                        }
+                        player.openInventory(inventory);
                     }
-                });
+                }
 
             } else if (event.getClickedInventory().getTitle().equalsIgnoreCase("§8» §aWähle ein Kit aus")) {
                 event.setCancelled(true);
@@ -93,7 +100,7 @@ public class InventoryClickListener implements Listener {
                     getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
                         Kit kit = getBuildFFA().getKitRegistry().get(event.getSlot());
                         GamePlayer gamePlayer = getBuildFFA().getOnlinePlayers().get(player);
-                        if (gamePlayer.hasKitBought(kit)) {
+                        if (gamePlayer.ownKit(kit)) {
                             getBuildFFA().getOnlinePlayers().get(player).selectKit(kit);
                             player.closeInventory();
                         } else {
@@ -108,12 +115,13 @@ public class InventoryClickListener implements Listener {
                         }
                     });
                 }
-            } else if(event.getClickedInventory().getTitle().equalsIgnoreCase("§8» §aWähle eine Blockart aus")) {
+            } else if (event.getClickedInventory().getTitle().equalsIgnoreCase("§8» §aWähle eine Blockart aus")) {
                 event.setCancelled(true);
-                if(event.getCurrentItem() != null) {
+                if (event.getCurrentItem() != null) {
                     getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
 
                         BuildBlocks buildBlocks = getBuildFFA().getBuildBlockRegistry().get(event.getSlot());
+                        System.out.println(buildBlocks.getId());
                         getBuildFFA().getOnlinePlayers().get(player).selectBlocks(buildBlocks);
 
                         player.closeInventory();

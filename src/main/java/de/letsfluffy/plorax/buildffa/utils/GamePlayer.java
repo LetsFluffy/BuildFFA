@@ -27,41 +27,49 @@ public class GamePlayer {
 
     private BuildBlocks buildBlocks;
 
-    @Setter
     private ItemStack[] itemStacks;
+
+    @Setter
+    private boolean inSpawnArea = true;
 
     public GamePlayer(Player player) {
         this.player = player;
         this.selectedKit = BuildFFA.getBuildFFA().getKitRegistry().get(BuildFFA.getBuildFFA().getStatsSQL().getLastKit(player.getUniqueId()));
         this.buildBlocks = BuildFFA.getBuildFFA().getBuildBlockRegistry().get(BuildFFA.getBuildFFA().getStatsSQL().getLastBuildBlock(player.getUniqueId()));
         itemStacks = BuildFFA.getBuildFFA().getStatsSQL().getInventoryItems(getPlayer().getUniqueId(), getSelectedKit());
-
+        itemStacks = getSelectedKit().buildItems(itemStacks);
         for(Integer id : BuildFFA.getBuildFFA().getKitRegistry().keySet()) {
             Kit kit = BuildFFA.getBuildFFA().getKitRegistry().get(id);
-            if(hasKitBought(kit)) {
+            if(ownKit(kit)) {
                 getOwnedKits().add(kit);
             }
         }
+    }
+
+    public void setItemStacks(ItemStack[] itemStacks) {
+        this.itemStacks = getSelectedKit().buildItems(itemStacks);
     }
 
     public void selectKit(Kit kit) {
         if(getOwnedKits().contains(kit)) {
             selectedKit = kit;
             itemStacks = BuildFFA.getBuildFFA().getStatsSQL().getInventoryItems(player.getUniqueId(), kit);
+            BuildFFA.getBuildFFA().getStatsSQL().updateLastKit(player.getUniqueId(), kit);
             player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Das Kit wurde erfolgreich ausgewählt!");
         } else {
             player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Du hast das Kit bereits ausgewählt!");
         }
     }
 
-    public void getKit(Kit kit) {
+    public void getKit() {
+        Kit kit = getSelectedKit();
         if(getOwnedKits().contains(kit)) {
             selectedKit = kit;
             getPlayer().getInventory().clear();
             getPlayer().getInventory().setArmorContents(kit.getArmorContents());
             itemStacks = kit.buildItems(itemStacks);
             for(int i = 0; i < itemStacks.length; i++) {
-                if(!BuildFFA.getBuildFFA().getIdsOfBlocks().contains(itemStacks[i])) {
+                if(!BuildFFA.getBuildFFA().getIdsOfBlocks().contains(itemStacks[i].getTypeId())) {
                     player.getInventory().setItem(i, itemStacks[i]);
                 } else {
                     player.getInventory().setItem(i, getBuildBlocks().getDefaultState());
@@ -81,7 +89,7 @@ public class GamePlayer {
     }
 
 
-    public boolean hasKitBought(Kit kit) {
+    public boolean ownKit(Kit kit) {
         return BuildFFA.getBuildFFA().getStatsSQL().hasKitBought(player.getUniqueId(), kit);
     }
 

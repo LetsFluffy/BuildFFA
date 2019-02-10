@@ -39,8 +39,9 @@ public class PlayerDeathListener implements Listener {
         event.setKeepInventory(true);
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
-        player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[0]);
-        player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[1]);
+        player.getInventory().setItem(0, ItemStackBuilder.getSpawnItems()[0]);
+        player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[1]);
+        player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[2]);
         getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
             long[] l = new long[2];
             l[0] = 0;
@@ -85,6 +86,7 @@ public class PlayerDeathListener implements Listener {
             player.sendMessage(getBuildFFA().getPrefix() + "§7Die wurde §a§l1 Coin §r§7abgezogen.");
         }
         PacketScoreboard.updateScoreboard(player);
+        getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(true);
     }
 
 }

@@ -1,6 +1,7 @@
 package de.letsfluffy.plorax.buildffa.listener;
 
 import de.letsfluffy.plorax.buildffa.BuildFFA;
+import de.letsfluffy.plorax.buildffa.utils.ItemStackBuilder;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,10 +39,15 @@ public class InventoryCloseListener implements Listener {
             }
             if(!allSlotsUsed) {
                 player.sendMessage(getBuildFFA().getPrefix() + "§cDu musst alle Items in das Inventar packen.");
+                player.getInventory().clear();
+                player.getInventory().setArmorContents(null);
+                player.getInventory().setItem(0, ItemStackBuilder.getSpawnItems()[0]);
+                player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[1]);
+                player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[2]);
                 return;
             } else {
                 getBuildFFA().getStatsSQL().updateInventory(player.getUniqueId(), getBuildFFA().getOnlinePlayers().get(player).getSelectedKit(), inventory);
-                player.sendMessage(getBuildFFA().getPrefix() +"§aDein Inventar wurde erfolgreich geupdatet.");
+                player.sendMessage(getBuildFFA().getPrefix() +"§7Dein Inventar wurde erfolgreich geupdatet.");
                 getBuildFFA().getOnlinePlayers().get(player).setItemStacks(getBuildFFA().getStatsSQL().getInventoryItems(player.getUniqueId(),
                         getBuildFFA().getOnlinePlayers().get(player).getSelectedKit()));
             }

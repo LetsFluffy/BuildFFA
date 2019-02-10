@@ -14,86 +14,136 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class ItemStackBuilder {
 
     public static ItemStack modifyItemStack(ItemStack itemStack, String displayName, Enchantment[] enchantments, int[] level) {
-        itemStack.getItemMeta().setDisplayName(displayName);
-        itemStack.getItemMeta().spigot().setUnbreakable(true);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(displayName);
+        itemMeta.spigot().setUnbreakable(true);
         for(int i = 0; i < enchantments.length; i++) {
-            itemStack.getItemMeta().addEnchant(enchantments[i], level[i], false);
+            itemMeta.addEnchant(enchantments[i], level[i], true);
         }
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack modifyItemStack(ItemStack itemStack, String displayName) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(displayName);
+        itemMeta.spigot().setUnbreakable(true);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack modifyItemStack(ItemStack itemStack, int amount, String displayName) {
+        itemStack.setAmount(amount);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(displayName);
+        itemMeta.spigot().setUnbreakable(true);
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack getBuildBlock(Material material, int amount, int subid, String displayName) {
         ItemStack itemStack = new ItemStack(material, amount, (short) subid);
-        itemStack.getItemMeta().setDisplayName("§a" + displayName);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName("§a" + displayName);
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack getItem(Material material, String displayName, Enchantment[] enchantments, int[] level) {
         ItemStack itemStack = new ItemStack(material);
-        itemStack.getItemMeta().setDisplayName(displayName);
-        itemStack.getItemMeta().spigot().setUnbreakable(true);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(displayName);
+        itemMeta.spigot().setUnbreakable(true);
         for(int i = 0; i < enchantments.length; i++) {
-            itemStack.getItemMeta().addEnchant(enchantments[i], level[i], false);
+            itemMeta.addEnchant(enchantments[i], level[i], true);
         }
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack getHelmet(Material material) {
         ItemStack itemStack = new ItemStack(material);
-        itemStack.getItemMeta().setDisplayName("§aHelm");
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName("§aHelm");
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack getChestplate(Material material) {
         ItemStack itemStack = new ItemStack(material);
-        itemStack.getItemMeta().setDisplayName("§aBrustplatte");
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName("§aBrustplatte");
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack getLeggings(Material material) {
         ItemStack itemStack = new ItemStack(material);
-        itemStack.getItemMeta().setDisplayName("§aHose");
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName("§aHose");
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack getBoots(Material material) {
         ItemStack itemStack = new ItemStack(material);
-        itemStack.getItemMeta().setDisplayName("§aSchuhe");
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName("§aSchuhe");
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack getHelmet(Material material, Enchantment enchantment, int level) {
         ItemStack itemStack = getHelmet(material);
-        itemStack.getItemMeta().addEnchant(enchantment, level, false);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.addEnchant(enchantment, level, true);
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack getChestplate(Material material, Enchantment enchantment, int level) {
         ItemStack itemStack = getChestplate(material);
-        itemStack.getItemMeta().addEnchant(enchantment, level, false);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.addEnchant(enchantment, level, true);
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack getLeggings(Material material, Enchantment enchantment, int level) {
         ItemStack itemStack = getLeggings(material);
-        itemStack.getItemMeta().addEnchant(enchantment, level, false);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.addEnchant(enchantment, level, true);
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack getBoots(Material material, Enchantment enchantment, int level) {
         ItemStack itemStack = getBoots(material);
-        itemStack.getItemMeta().addEnchant(enchantment, level, false);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.addEnchant(enchantment, level, true);
+        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
     public static ItemStack[] getSpawnItems() {
         ItemStack[] itemStacks = new ItemStack[3];
+        ItemMeta[] itemMetas = new ItemMeta[3];
+
         itemStacks[0] = new ItemStack(Material.REDSTONE_TORCH_ON);
-        itemStacks[0].getItemMeta().setDisplayName("§aKits und Blöcke");
+        itemMetas[0] = itemStacks[0].getItemMeta();
+        itemMetas[0].setDisplayName("§aKits und Blöcke");
+        itemStacks[0].setItemMeta(itemMetas[0]);
+
         itemStacks[1] = new ItemStack(Material.CHEST);
-        itemStacks[1].getItemMeta().setDisplayName("§aInventar sortieren");
+        itemMetas[1] = itemStacks[1].getItemMeta();
+        itemMetas[1].setDisplayName("§aInventar sortieren");
+        itemStacks[1].setItemMeta(itemMetas[1]);
+
         itemStacks[2] = new ItemStack(Material.SLIME_BALL);
-        itemStacks[2].getItemMeta().setDisplayName("§aZurück zur Lobby");
+        itemMetas[2] = itemStacks[2].getItemMeta();
+        itemMetas[2].setDisplayName("§aZurück zur Lobby");
+        itemStacks[2].setItemMeta(itemMetas[2]);
+
         return itemStacks;
     }
 

@@ -39,10 +39,12 @@ public class MapImporter {
     }
 
     public void importMaps() {
-        File mapsFile = new File(getBuildFFA().getPrefix(), "maps.yml");
+        File mapsFile = new File(getBuildFFA().getDataFolder(), "maps.yml");
+        System.out.println(mapsFile);
         FileConfiguration mapsConfiguration = YamlConfiguration.loadConfiguration(mapsFile);
         List<String> mapList = mapsConfiguration.getStringList("maps");
         for(String maps : mapList) {
+            System.out.println(maps);
             Bukkit.createWorld(new WorldCreator(maps));
         }
         for(World world : Bukkit.getWorlds()) {
@@ -57,6 +59,7 @@ public class MapImporter {
                 System.out.println("Map File " + maps + " does NOT exists!");
                 continue;
             }
+            System.out.println("Map " + maps + " found");
             FileConfiguration mapConfiguration = YamlConfiguration.loadConfiguration(mapFile);
 
             World world = Bukkit.getWorld(mapConfiguration.getString("Spawn.WORLD"));
@@ -70,12 +73,13 @@ public class MapImporter {
             spawn.setPitch((float) pitch);
 
             int spawnHigh = mapConfiguration.getInt("spawnHigh");
+            int dieHigh = mapConfiguration.getInt("dieHigh");
             String name = mapConfiguration.getString("name");
             String displayName = mapConfiguration.getString("displayName");
             String creator = mapConfiguration.getString("creator");
             String itemID = mapConfiguration.getString("item");
 
-            MapImportData mapImportData = new MapImportData(name, displayName, creator, itemID, spawnHigh, spawn);
+            MapImportData mapImportData = new MapImportData(name, displayName, creator, itemID, spawnHigh, dieHigh, spawn);
             getMaps().add(mapImportData);
 
         }
@@ -87,12 +91,17 @@ public class MapImporter {
     }
 
     public void selectRandomMap() {
-        int random = new Random().nextInt(getMaps().size());
-        setMap(getMaps().get(random));
+        if(getMaps().size() > 0) {
+            int random = new Random().nextInt(getMaps().size());
+            setMap(getMaps().get(random));
+        }
     }
 
     public MapImportData selectNextRandomMap() {
-        int random = new Random().nextInt(getMaps().size());
-        return getMaps().get(random);
+        if(getMaps().size() > 0) {
+            int random = new Random().nextInt(getMaps().size());
+            return getMaps().get(random);
+        }
+        return null;
     }
 }

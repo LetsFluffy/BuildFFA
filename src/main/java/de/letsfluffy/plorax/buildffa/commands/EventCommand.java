@@ -21,8 +21,9 @@ public class EventCommand implements CommandExecutor {
 
     public EventCommand(BuildFFA buildFFA) {
         this.buildFFA = buildFFA;
+        getBuildFFA().getCommand("event").setExecutor(this);
     }
-    private String supportGroupManager = "Horst Seehofer";
+    private String supportGroupManager = "LetsFluffy";
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
