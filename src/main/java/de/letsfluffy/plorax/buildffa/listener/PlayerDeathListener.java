@@ -71,7 +71,7 @@ public class PlayerDeathListener implements Listener {
             kills++;
             if((kills == 3) || ((kills % 5) == 0)) {
                 for(Player player1 : Bukkit.getOnlinePlayers()) {
-                    player1.sendMessage(getBuildFFA().getPrefix() + new PloraxPlayer(killer.getUniqueId()).getPrefixName() + " §7hat eine §a§l" + kills + "§r §7Killstreak!");
+                    player1.sendMessage(getBuildFFA().getPrefix() + new PloraxPlayer(killer.getUniqueId()).getPrefixName() + " §7hat eine §a§l" + kills + "er§r §7Killstreak!");
                 }
                 getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
                     PloraxAPI.getCoinAPI().addCoins(killer.getUniqueId(), getBuildFFA().getKillCoins());
