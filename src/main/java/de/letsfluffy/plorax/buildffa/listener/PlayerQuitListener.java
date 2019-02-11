@@ -2,6 +2,7 @@ package de.letsfluffy.plorax.buildffa.listener;
 
 import de.letsfluffy.plorax.buildffa.BuildFFA;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -24,11 +25,19 @@ public class PlayerQuitListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         event.setQuitMessage(null);
+        Player player = event.getPlayer();
         if(getBuildFFA().getCombatLog().containsKey(event.getPlayer())) {
             getBuildFFA().getCombatLog().remove(event.getPlayer());
         }
         if(getBuildFFA().getOnlinePlayers().containsKey(event.getPlayer())) {
             getBuildFFA().getOnlinePlayers().remove(event.getPlayer());
+        }
+        if(getBuildFFA().getProjectiles().containsKey(player)) {
+            getBuildFFA().getProjectiles().get(player).remove();
+            getBuildFFA().getProjectiles().remove(player);
+        }
+        if(getBuildFFA().getKillstreak().containsKey(player)) {
+            getBuildFFA().getKillstreak().remove(player);
         }
      }
 }

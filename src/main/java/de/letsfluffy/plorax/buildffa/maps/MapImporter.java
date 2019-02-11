@@ -99,7 +99,7 @@ public class MapImporter {
     }
 
     public MapImportData selectNextRandomMap() {
-        if(getMaps().size() > 0) {
+        if(getMaps().size() > 1) {
             List<MapImportData> maps = new ArrayList<>();
             for(MapImportData mapImportData : getMaps()) {
                 if(getMap() != mapImportData) {

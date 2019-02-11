@@ -246,6 +246,10 @@ public class GameManager {
             public void run() {
                for(Player player : Bukkit.getOnlinePlayers()) {
                    if(player.getLocation().getY() <= getBuildFFA().getMapImporter().getMap().getDieHigh()) {
+                       if(getBuildFFA().getProjectiles().containsKey(player)) {
+                           getBuildFFA().getProjectiles().get(player).remove();
+                           getBuildFFA().getProjectiles().remove(player);
+                       }
                        player.teleport(getBuildFFA().getMapImporter().getMap().getSpawn());
                        player.getInventory().clear();
                        player.getInventory().setArmorContents(null);
@@ -290,6 +294,7 @@ public class GameManager {
                        } else {
                            player.sendMessage(getBuildFFA().getPrefix() + "§7Du bist gestorben.");
                        }
+                       player.setHealth(20);
                        getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(true);
                        PacketScoreboard.updateScoreboard(player);
                    } else if(player.getLocation().getY() <= getBuildFFA().getMapImporter().getMap().getSpawnHigh() &&

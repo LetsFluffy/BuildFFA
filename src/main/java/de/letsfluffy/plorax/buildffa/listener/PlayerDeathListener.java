@@ -61,6 +61,11 @@ public class PlayerDeathListener implements Listener {
         }
         getBuildFFA().getKillstreak().remove(player);
         getBuildFFA().getKillstreak().put(player, 0);
+        if(getBuildFFA().getProjectiles().containsKey(player)) {
+            getBuildFFA().getProjectiles().get(player).remove();
+            getBuildFFA().getProjectiles().remove(player);
+        }
+
         if (killer != null) {
             int kills = getBuildFFA().getKillstreak().get(killer);
             kills++;

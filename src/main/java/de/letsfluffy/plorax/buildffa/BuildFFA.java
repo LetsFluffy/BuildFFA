@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
@@ -75,6 +76,9 @@ public class BuildFFA extends JavaPlugin {
 
     @Getter
     private final List<Integer> idsOfBlocks = new ArrayList<>();
+
+    @Getter
+    private final HashMap<Player, Projectile> projectiles = new HashMap<>();
 
 
 
