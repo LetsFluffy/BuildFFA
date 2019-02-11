@@ -5,6 +5,7 @@ import lombok.Getter;
 import net.plorax.api.PloraxAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -31,19 +32,19 @@ public class EntityDamageByEntityListener implements Listener {
         if(event.getDamager() instanceof Player) {
             Player damager = (Player) event.getDamager();
             Player player = (Player) event.getEntity();
-            if(player.getLocation().getY() >= getBuildFFA().getMapImporter().getMap().getSpawnHigh() &&
+            if (player.getLocation().getY() >= getBuildFFA().getMapImporter().getMap().getSpawnHigh() &&
                     damager.getLocation().getY() >= getBuildFFA().getMapImporter().getMap().getSpawnHigh()) {
                 event.setCancelled(true);
                 return;
             }
-            if(PloraxAPI.getSpecPlayers().containsKey(damager) || PloraxAPI.getSpecPlayers().containsKey(player)) {
+            if (PloraxAPI.getSpecPlayers().containsKey(damager) || PloraxAPI.getSpecPlayers().containsKey(player)) {
                 event.setCancelled(true);
                 return;
             }
-            if(getBuildFFA().getCombatLog().containsKey(player)) {
+            if (getBuildFFA().getCombatLog().containsKey(player)) {
                 getBuildFFA().getCombatLog().remove(player);
             }
-            if(getBuildFFA().getCombatLog().containsKey(damager)) {
+            if (getBuildFFA().getCombatLog().containsKey(damager)) {
                 getBuildFFA().getCombatLog().remove(damager);
             }
             getBuildFFA().getCombatLog().put(player, damager);
@@ -51,15 +52,45 @@ public class EntityDamageByEntityListener implements Listener {
             Bukkit.getScheduler().runTaskLaterAsynchronously(getBuildFFA(), new Runnable() {
                 @Override
                 public void run() {
-                    if(getBuildFFA().getCombatLog().containsKey(player)) {
+                    if (getBuildFFA().getCombatLog().containsKey(player)) {
                         getBuildFFA().getCombatLog().remove(player);
                     }
-                    if(getBuildFFA().getCombatLog().containsKey(damager)) {
+                    if (getBuildFFA().getCombatLog().containsKey(damager)) {
                         getBuildFFA().getCombatLog().remove(damager);
                     }
                 }
-            }, 20*8);
-
+            }, 20 * 8);
+        } else if(event.getDamager() instanceof Projectile) {
+            Player damager = (Player) ((Projectile) event.getDamager()).getShooter();
+            Player player = (Player) event.getEntity();
+            if (player.getLocation().getY() >= getBuildFFA().getMapImporter().getMap().getSpawnHigh() &&
+                    damager.getLocation().getY() >= getBuildFFA().getMapImporter().getMap().getSpawnHigh()) {
+                event.setCancelled(true);
+                return;
+            }
+            if (PloraxAPI.getSpecPlayers().containsKey(damager) || PloraxAPI.getSpecPlayers().containsKey(player)) {
+                event.setCancelled(true);
+                return;
+            }
+            if (getBuildFFA().getCombatLog().containsKey(player)) {
+                getBuildFFA().getCombatLog().remove(player);
+            }
+            if (getBuildFFA().getCombatLog().containsKey(damager)) {
+                getBuildFFA().getCombatLog().remove(damager);
+            }
+            getBuildFFA().getCombatLog().put(player, damager);
+            getBuildFFA().getCombatLog().put(damager, player);
+            Bukkit.getScheduler().runTaskLaterAsynchronously(getBuildFFA(), new Runnable() {
+                @Override
+                public void run() {
+                    if (getBuildFFA().getCombatLog().containsKey(player)) {
+                        getBuildFFA().getCombatLog().remove(player);
+                    }
+                    if (getBuildFFA().getCombatLog().containsKey(damager)) {
+                        getBuildFFA().getCombatLog().remove(damager);
+                    }
+                }
+            }, 20 * 8);
         } else {
             event.setCancelled(true);
         }

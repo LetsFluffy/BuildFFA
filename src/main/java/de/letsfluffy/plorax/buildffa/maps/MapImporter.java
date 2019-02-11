@@ -9,6 +9,7 @@ import org.bukkit.WorldCreator;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
