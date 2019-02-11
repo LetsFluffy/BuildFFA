@@ -299,6 +299,7 @@ public class GameManager {
                        PacketScoreboard.updateScoreboard(player);
                    } else if(player.getLocation().getY() <= getBuildFFA().getMapImporter().getMap().getSpawnHigh() &&
                            getBuildFFA().getOnlinePlayers().get(player).isInSpawnArea()) {
+                       player.closeInventory();
                        getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(false);
                        player.getInventory().clear();
                        player.getInventory().setArmorContents(getBuildFFA().getOnlinePlayers().get(player).getSelectedKit().getArmorContents());
