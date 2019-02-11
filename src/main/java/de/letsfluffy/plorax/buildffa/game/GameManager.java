@@ -297,6 +297,7 @@ public class GameManager {
                        player.setHealth(20);
                        getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(true);
                        PacketScoreboard.updateScoreboard(player);
+                       player.setVelocity(new Vector());
                    } else if(player.getLocation().getY() <= getBuildFFA().getMapImporter().getMap().getSpawnHigh() &&
                            getBuildFFA().getOnlinePlayers().get(player).isInSpawnArea()) {
                        player.closeInventory();

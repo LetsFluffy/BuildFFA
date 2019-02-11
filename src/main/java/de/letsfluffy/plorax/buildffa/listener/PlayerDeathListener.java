@@ -94,6 +94,7 @@ public class PlayerDeathListener implements Listener {
         } else {
             player.sendMessage(getBuildFFA().getPrefix() + "§7Du bist gestorben.");
         }
+        player.setVelocity(new Vector());
         PacketScoreboard.updateScoreboard(player);
         getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(true);
 
