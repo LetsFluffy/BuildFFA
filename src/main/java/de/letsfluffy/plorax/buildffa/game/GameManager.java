@@ -104,6 +104,9 @@ public class GameManager {
         EnderpearlKit enderpearlKit = new EnderpearlKit();
         getBuildFFA().getKitRegistry().put(enderpearlKit.getId(), enderpearlKit);
 
+        GranateKit granateKit = new GranateKit();
+        getBuildFFA().getKitRegistry().put(granateKit.getId(), granateKit);
+
         getBuildFFA().getStatsSQL().addKit(knockKit);
         getBuildFFA().getStatsSQL().updateKit(knockKit);
 
