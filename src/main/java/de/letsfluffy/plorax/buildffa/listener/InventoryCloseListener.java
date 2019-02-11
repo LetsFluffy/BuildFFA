@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * (c) by Frederic Kayser(2015-2019)
@@ -30,13 +31,27 @@ public class InventoryCloseListener implements Listener {
         Inventory inventory = event.getInventory();
         if(inventory.getTitle().equalsIgnoreCase("§8» §aInventar sortieren")) {
             getBuildFFA().getStatsSQL().getExecutorService().execute( () -> {
-            boolean allSlotsUsed = true;
-            for(int i = 0; i < 8; i++) {
-                if(inventory.getItem(i) == null) {
-                    allSlotsUsed = false;
-                    break;
+            boolean allSlotsUsed;
+            int airSlots = 0;
+            for(int i = 0; i < getBuildFFA().getOnlinePlayers().get(player).getSelectedKit().getDefaultItemsSorted().length; i++) {
+                ItemStack itemStack = getBuildFFA().getOnlinePlayers().get(player).getSelectedKit().getDefaultItemsSorted()[i];
+                if(itemStack.getTypeId() == 0) {
+                    airSlots++;
                 }
             }
+
+            int airSlotsInInventory = 0;
+            for(int i = 0; i < 8; i++) {
+                if(inventory.getItem(i) == null) {
+                    airSlotsInInventory++;
+                }
+            }
+            if(airSlotsInInventory == airSlots) {
+                allSlotsUsed = true;
+            } else {
+                allSlotsUsed = false;
+            }
+
             if(!allSlotsUsed) {
                 player.sendMessage(getBuildFFA().getPrefix() + "§cDu musst alle Items in das Inventar packen.");
                 player.getInventory().clear();

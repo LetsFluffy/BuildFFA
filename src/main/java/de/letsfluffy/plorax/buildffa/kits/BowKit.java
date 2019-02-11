@@ -15,13 +15,12 @@ import java.util.List;
  * (c) by Frederic Kayser(2015-2019)
  * Project: BuildFFA
  * Package: de.letsfluffy.plorax.buildffa.kits
- * Class created: 2019-02-06, 20:19
+ * Class created: 2019-02-11, 14:11
  */
-public class KnockKit implements Kit {
-
+public class BowKit implements Kit {
     @Override
     public int getId() {
-        return 1;
+        return 3;
     }
 
     @Override
@@ -31,9 +30,9 @@ public class KnockKit implements Kit {
 
     @Override
     public ItemStack getIcon() {
-        ItemStack itemStack = new ItemStack(Material.STICK);
+        ItemStack itemStack = new ItemStack(Material.BOW);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName("§8» §aKnock Kit");
+        itemMeta.setDisplayName("§8» §aBogen Kit");
         List<String> lore = new ArrayList<>();
         for(int i = 0; i < getDefaultItemsSorted().length; i++) {
             ItemStack itemStack1 = getDefaultItemsSorted()[i];
@@ -57,19 +56,24 @@ public class KnockKit implements Kit {
         ItemStack[] itemStacks = new ItemStack[9];
         ItemMeta[] itemMetas = new ItemMeta[9];
 
-        itemStacks[0] = ItemStackBuilder.buildIronSword(1);
+        itemStacks[0] = ItemStackBuilder.buildIronSword(2);
 
-        itemStacks[1] = new ItemStack(Material.STICK);
+        itemStacks[1] = new ItemStack(Material.BOW);
         itemMetas[1] = itemStacks[1].getItemMeta();
-        itemMetas[1].setDisplayName("§aSchlagstock");
-        itemMetas[1].addEnchant(Enchantment.KNOCKBACK, 3, true);
+        itemMetas[1].setDisplayName("§aBogen");
+        itemMetas[1].addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+        itemMetas[1].spigot().setUnbreakable(true);
+        itemMetas[1].addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         itemStacks[1].setItemMeta(itemMetas[1]);
 
-        itemStacks[2] = new ItemStack(Material.AIR);
+        itemStacks[2] = new ItemStack(Material.ARROW, 16);
+        itemMetas[2] = itemStacks[2].getItemMeta();
+        itemMetas[2].setDisplayName("§aPfeil");
+        itemStacks[2].setItemMeta(itemMetas[2]);
 
-        itemStacks[3] = ItemStackBuilder.buildCobweb(3);
+        itemStacks[3] = ItemStackBuilder.buildCobweb(24);
 
-        itemStacks[4] = ItemStackBuilder.buildRescuePlatform(3);
+        itemStacks[4] = ItemStackBuilder.buildRescuePlatform(4);
 
         itemStacks[5] = new ItemStack(Material.SANDSTONE, 64);
         itemMetas[5] = itemStacks[5].getItemMeta();

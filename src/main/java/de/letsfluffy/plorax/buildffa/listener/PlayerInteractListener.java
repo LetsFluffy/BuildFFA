@@ -50,11 +50,11 @@ public class PlayerInteractListener implements Listener {
                 Inventory inventory = Bukkit.createInventory(null, 9, "§8» §aInventar sortieren");
                 for(int i = 0; i < getBuildFFA().getOnlinePlayers().get(player).getItemStacks().length; i++) {
                     ItemStack[] itemStacks = getBuildFFA().getOnlinePlayers().get(player).getItemStacks();
+                    GamePlayer gamePlayer = getBuildFFA().getOnlinePlayers().get(player);
                     if(getBuildFFA().getIdsOfBlocks().contains(itemStacks[i].getTypeId())) {
-                        GamePlayer gamePlayer = getBuildFFA().getOnlinePlayers().get(player);
                         inventory.setItem(i, gamePlayer.getBuildBlocks().getDefaultState());
                     } else {
-                        inventory.setItem(i, itemStacks[i]);
+                        inventory.setItem(i, gamePlayer.getSelectedKit().buildItems(itemStacks)[i]);
                     }
                 }
                 player.openInventory(inventory);

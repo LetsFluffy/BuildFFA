@@ -4,9 +4,7 @@ import de.letsfluffy.plorax.buildffa.BuildFFA;
 import de.letsfluffy.plorax.buildffa.buildblocks.*;
 import de.letsfluffy.plorax.buildffa.events.DoubleCoinsEvent;
 import de.letsfluffy.plorax.buildffa.events.PowerEvent;
-import de.letsfluffy.plorax.buildffa.kits.Kit;
-import de.letsfluffy.plorax.buildffa.kits.KnightKit;
-import de.letsfluffy.plorax.buildffa.kits.KnockKit;
+import de.letsfluffy.plorax.buildffa.kits.*;
 import de.letsfluffy.plorax.buildffa.maps.MapImportData;
 import de.letsfluffy.plorax.buildffa.utils.ActionbarAPI;
 import de.letsfluffy.plorax.buildffa.utils.ItemStackBuilder;
@@ -91,12 +89,35 @@ public class GameManager {
     }
 
     public void registerKits() {
-        KnockKit knockKit = new KnockKit();
-        BuildFFA.getBuildFFA().getKitRegistry().put(knockKit.getId(), knockKit);
-
         KnightKit knightKit = new KnightKit();
-        BuildFFA.getBuildFFA().getKitRegistry().put(knightKit.getId(), knightKit);
+        getBuildFFA().getKitRegistry().put(knightKit.getId(), knightKit);
+
+        KnockKit knockKit = new KnockKit();
+        getBuildFFA().getKitRegistry().put(knockKit.getId(), knockKit);
+
+        GrapplingHookKit grapplingHookKit = new GrapplingHookKit();
+        getBuildFFA().getKitRegistry().put(grapplingHookKit.getId(), grapplingHookKit);
+
+        BowKit bowKit = new BowKit();
+        getBuildFFA().getKitRegistry().put(bowKit.getId(), bowKit);
+
+        EnderpearlKit enderpearlKit = new EnderpearlKit();
+        getBuildFFA().getKitRegistry().put(enderpearlKit.getId(), enderpearlKit);
+
+        getBuildFFA().getStatsSQL().addKit(knockKit);
+        getBuildFFA().getStatsSQL().updateKit(knockKit);
+
         getBuildFFA().getStatsSQL().addKit(knightKit);
+        getBuildFFA().getStatsSQL().updateKit(knightKit);
+
+        getBuildFFA().getStatsSQL().addKit(grapplingHookKit);
+        getBuildFFA().getStatsSQL().updateKit(grapplingHookKit);
+
+        getBuildFFA().getStatsSQL().addKit(bowKit);
+        getBuildFFA().getStatsSQL().updateKit(bowKit);
+
+        getBuildFFA().getStatsSQL().addKit(enderpearlKit);
+        getBuildFFA().getStatsSQL().updateKit(enderpearlKit);
     }
 
     public Inventory createKitInventory() {

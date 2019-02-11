@@ -13,6 +13,7 @@ import javax.xml.transform.Result;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -88,7 +89,10 @@ public class StatsSQL {
                     String data = i + "-false-";
                     for (int j = 0; j < getBuildFFA().getKitRegistry().get(i).getDefaultItemsSorted().length; j++) {
                         ItemStack itemStack = getBuildFFA().getKitRegistry().get(i).getDefaultItemsSorted()[j];
-                        String s1 = itemStack.getTypeId() + ":" + itemStack.getData().getData();
+                        String s1 = "0:0";
+                        if(itemStack != null) {
+                            s1 = itemStack.getTypeId() + ":" + itemStack.getData().getData();
+                        }
                         data = data + s1 + ";";
                     }
                     data = data.substring(0, data.length() - 1);
@@ -114,7 +118,7 @@ public class StatsSQL {
         }
     }
 
-        public void updateDatabase () {
+        public void updateKit(Kit kit) {
             ResultSet resultSet = null;
             try {
                 resultSet = selectAllData.executeQuery();
@@ -122,21 +126,50 @@ public class StatsSQL {
                     String uuid = resultSet.getString("UUID");
                     String kitsString = resultSet.getString("KITS");
                     String[] kitsStringArray = kitsString.split("#");
-                    for (int i = 0; i < kitsStringArray.length; i++) {
-                        String kit = kitsStringArray[i];
-                        String[] kitArray = kit.split("-");
-                        int kitId = Integer.valueOf(kitArray[0]);
-                        boolean owned = Boolean.valueOf(kitArray[1]);
-                        String items = kitArray[2];
-                        String[] itemsArray = items.split(";");
-                        for (int j = 0; j < itemsArray.length; j++) {
-                            String item = itemsArray[j];
-                            int id = Integer.valueOf(item.split(":")[0]);
-                            byte subid = Byte.valueOf(item.split(":")[1]);
-                            if (getBuildFFA().getIdsOfBlocks().contains(id)) {
+                    String kitString = kitsStringArray[kit.getId()];
+                    String data = kitString.split("-")[0] + "-" + kitString.split("-")[1] + "-";
 
+                    String itemsBefore = kitString.split("-")[2];
+                    String[] itemBeforeArray = itemsBefore.split(";");
+
+                    final HashMap<ItemStack, Boolean> itemSameValue = new HashMap<>();
+
+                    for(int i = 0; i < itemBeforeArray.length; i++) {
+                        int itemID = Integer.valueOf(itemBeforeArray[i].split(":")[0]);
+                        byte subID = Byte.valueOf(itemBeforeArray[i].split(":")[1]);
+                        for(int j = 0; j < kit.getDefaultItemsSorted().length; j++) {
+                            ItemStack itemStack = kit.getDefaultItemsSorted()[j];
+                            if(itemStack.getTypeId() == itemID && itemStack.getData().getData() == subID) {
+                                itemSameValue.put(itemStack, true);
+                                break;
                             }
                         }
+                    }
+
+                    if(itemSameValue.size() < 9) {
+
+                        for (int i = 0; i < kit.getDefaultItemsSorted().length; i++) {
+                            ItemStack itemStack = kit.getDefaultItemsSorted()[i];
+                            String s1 = "0:0";
+                            if(itemStack != null) {
+                                s1 = itemStack.getTypeId() + ":" + itemStack.getData().getData();
+                            }
+                            data = data + s1 + ";";
+                        }
+                        data = data.substring(0, data.length() - 1);
+                        String newKitData = "";
+                        for (int i = 0; i < getBuildFFA().getKitRegistry().size(); i++) {
+                            if (kit.getId() == i) {
+                                newKitData = newKitData + data + "#";
+                            } else {
+                                newKitData = newKitData + kitsStringArray[i] + "#";
+                            }
+                        }
+                        newKitData = newKitData.substring(0, newKitData.length() - 1);
+
+                        updateKits.setString(1, newKitData);
+                        updateKits.setString(2, uuid);
+                        updateKits.executeUpdate();
                     }
                 }
             } catch (SQLException e) {
@@ -157,7 +190,10 @@ public class StatsSQL {
                     String data = i + "-false-";
                     for (int j = 0; j < getBuildFFA().getKitRegistry().get(i).getDefaultItemsSorted().length; j++) {
                         ItemStack itemStack = getBuildFFA().getKitRegistry().get(i).getDefaultItemsSorted()[j];
-                        String s1 = itemStack.getTypeId() + ":" + itemStack.getData().getData();
+                        String s1 = "0:0";
+                        if(itemStack != null) {
+                            s1 = itemStack.getTypeId() + ":" + itemStack.getData().getData();
+                        }
                         data = data + s1 + ";";
                     }
                     data = data.substring(0, data.length() - 1);
@@ -184,7 +220,10 @@ public class StatsSQL {
                 String data = "";
                 for (int i = 0; i < 9; i++) {
                     ItemStack itemStack = inventory.getItem(i);
-                    String s = itemStack.getTypeId() + ":" + itemStack.getData().getData();
+                    String s = "0:0";
+                    if(itemStack != null) {
+                        s = itemStack.getTypeId() + ":" + itemStack.getData().getData();
+                    }
                     data = data + s + ";";
                 }
                 data = data.substring(0, (data.length() - 1));

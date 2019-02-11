@@ -14,6 +14,33 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class ItemStackBuilder {
 
+    public static ItemStack buildIronSword(int level) {
+        ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.spigot().setUnbreakable(true);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        itemMeta.setDisplayName("§aSchwert");
+        itemMeta.addEnchant(Enchantment.DAMAGE_ALL, level, true);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack buildCobweb(int amount) {
+        ItemStack itemStack = new ItemStack(Material.WEB, amount);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName("§aSpinnenweben");
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack buildRescuePlatform(int amount) {
+        ItemStack itemStack = new ItemStack(Material.BLAZE_ROD, amount);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName("§aRettungsplattform");
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
     public static ItemStack modifyItemStack(ItemStack itemStack, String displayName, Enchantment[] enchantments, int[] level) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(displayName);

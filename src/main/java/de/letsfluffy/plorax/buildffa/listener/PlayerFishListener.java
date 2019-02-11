@@ -31,7 +31,7 @@ public class PlayerFishListener implements Listener {
     public void onPlayerFish(PlayerFishEvent event) {
         Player p = event.getPlayer();
         Fish h = event.getHook();
-        if (p.getLocation().getY() < getBuildFFA().getMapImporter().getMap().getSpawnHigh()) {
+        if (p.getLocation().getY() < getBuildFFA().getMapImporter().getMap().getSpawnHigh() && getBuildFFA().getOnlinePlayers().get(p).getSelectedKit().getId() == 2) {
             if (event.getState().equals(PlayerFishEvent.State.IN_GROUND) || event.getState().equals(PlayerFishEvent.State.FAILED_ATTEMPT)) {
                 if (Bukkit.getWorld(event.getPlayer().getWorld().getName()).getBlockAt(h.getLocation().getBlockX(), h.getLocation().getBlockY() - 1, h.getLocation().getBlockZ()).getType()
                         != Material.STATIONARY_WATER && Bukkit.getWorld(event.getPlayer().getWorld().getName()).getBlockAt(h.getLocation().getBlockX(), h.getLocation().getBlockY() - 1, h.getLocation().getBlockZ()).getType() != Material.AIR) {

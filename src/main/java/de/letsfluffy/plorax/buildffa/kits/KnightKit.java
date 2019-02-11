@@ -36,11 +36,13 @@ public class KnightKit implements Kit {
         List<String> lore = new ArrayList<>();
         for(int i = 0; i < getDefaultItemsSorted().length; i++) {
             ItemStack itemStack1 = getDefaultItemsSorted()[i];
-            ItemMeta itemMeta1 = itemStack1.getItemMeta();
-            if(BuildFFA.getBuildFFA().getIdsOfBlocks().contains(itemStack1.getTypeId())) {
-                lore.add("§8» §a" + itemStack1.getAmount() + "§7x §aBlöcke");
-            } else {
-                lore.add("§8» §a" + itemStack1.getAmount() + "§7x §a" + itemMeta1.getDisplayName());
+            if(!itemStack1.getType().equals(Material.AIR)) {
+                ItemMeta itemMeta1 = itemStack1.getItemMeta();
+                if (BuildFFA.getBuildFFA().getIdsOfBlocks().contains(itemStack1.getTypeId())) {
+                    lore.add("§8» §a" + itemStack1.getAmount() + "§7x §aBlöcke");
+                } else {
+                    lore.add("§8» §a" + itemStack1.getAmount() + "§7x §a" + itemMeta1.getDisplayName());
+                }
             }
         }
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -61,31 +63,18 @@ public class KnightKit implements Kit {
         ItemStack[] itemStacks = new ItemStack[9];
         ItemMeta[] itemMetas = new ItemMeta[9];
 
-        itemStacks[0] = new ItemStack(Material.IRON_SWORD);
-        itemMetas[0] = itemStacks[0].getItemMeta();
-        itemMetas[0].setDisplayName("§aSchwert");
-        itemMetas[0].addEnchant(Enchantment.DAMAGE_ALL, 2, true);
-        itemStacks[0].setItemMeta(itemMetas[0]);
+        itemStacks[0] = ItemStackBuilder.buildIronSword(2);
 
-        itemStacks[1] = new ItemStack(Material.ENDER_PEARL, 1);
+        itemStacks[1] = new ItemStack(Material.FISHING_ROD);
         itemMetas[1] = itemStacks[1].getItemMeta();
-        itemMetas[1].setDisplayName("§aEnderperle");
+        itemMetas[1].setDisplayName("§aAngel");
         itemStacks[1].setItemMeta(itemMetas[1]);
 
-        itemStacks[2] = new ItemStack(Material.FISHING_ROD);
-        itemMetas[2] = itemStacks[2].getItemMeta();
-        itemMetas[2].setDisplayName("§aAngel");
-        itemStacks[2].setItemMeta(itemMetas[2]);
+        itemStacks[2] = new ItemStack(Material.AIR);
 
-        itemStacks[3] = new ItemStack(Material.BLAZE_ROD, 2);
-        itemMetas[3] = itemStacks[3].getItemMeta();
-        itemMetas[3].setDisplayName("§aRettungsplattform");
-        itemStacks[3].setItemMeta(itemMetas[3]);
+        itemStacks[3] = ItemStackBuilder.buildCobweb(16);
 
-        itemStacks[4] = new ItemStack(Material.WEB, 8);
-        itemMetas[4] = itemStacks[4].getItemMeta();
-        itemMetas[4].setDisplayName("§aSpinnenweben");
-        itemStacks[4].setItemMeta(itemMetas[4]);
+        itemStacks[4] = ItemStackBuilder.buildRescuePlatform(3);
 
         itemStacks[5] = new ItemStack(Material.SANDSTONE, 64);
         itemMetas[5] = itemStacks[5].getItemMeta();
@@ -113,21 +102,10 @@ public class KnightKit implements Kit {
     @Override
     public ItemStack[] buildItems(ItemStack[] itemStacks) {
         for(int i = 0; i < itemStacks.length; i++) {
-            ItemStack itemStack = itemStacks[i];
-            if(itemStack.getType().equals(Material.IRON_SWORD)) {
-                Enchantment[] enchantments = {Enchantment.DAMAGE_ALL};
-                int[] level = {2};
-                itemStacks[i] = ItemStackBuilder.modifyItemStack(itemStack, "§aSchwert", enchantments, level);
-            } else if(itemStack.getType().equals(Material.ENDER_PEARL)) {
-                itemStacks[i] = ItemStackBuilder.modifyItemStack(itemStack,  "§aEnderperle");
-            } else if(itemStack.getType().equals(Material.FISHING_ROD)) {
-                itemStacks[i] = ItemStackBuilder.modifyItemStack(itemStack, "§aAngel");
-            } else if(BuildFFA.getBuildFFA().getIdsOfBlocks().contains(itemStack.getTypeId())) {
-                itemStacks[i] = ItemStackBuilder.getBuildBlock(Material.SANDSTONE, 64, 0, "§aSandstein");
-            } else if(itemStack.getType().equals(Material.BLAZE_ROD)) {
-                itemStacks[i] = ItemStackBuilder.modifyItemStack(itemStack, 2,"§aRettungsplattform");
-            } else if(itemStack.getType().equals(Material.WEB)){
-                itemStacks[i] = ItemStackBuilder.modifyItemStack(itemStack, 8, "§aSpinnenweben");
+            for(int j = 0; j < getDefaultItemsSorted().length; j++) {
+                if(itemStacks[i].getType().equals(getDefaultItemsSorted()[j].getType())) {
+                    itemStacks[i] = getDefaultItemsSorted()[j];
+                }
             }
         }
         return itemStacks;
