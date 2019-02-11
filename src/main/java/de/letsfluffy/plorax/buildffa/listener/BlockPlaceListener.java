@@ -36,8 +36,10 @@ public class BlockPlaceListener implements Listener {
                 getBuildFFA().getPlacedBlocks().remove(event.getBlock().getLocation());
             }
             event.setCancelled(false);
-            getBuildFFA().getPlacedBlocks().put(event.getBlock().getLocation(), new BuildBlock(event.getBlock(),
-                    getBuildFFA().getOnlinePlayers().get(event.getPlayer()).getBuildBlocks(), (event.getBlock().getType().equals(Material.WEB) ? false : true)));
+            if(getBuildFFA().getIdsOfBlocks().contains(event.getBlock().getTypeId())) {
+                getBuildFFA().getPlacedBlocks().put(event.getBlock().getLocation(), new BuildBlock(event.getBlock(),
+                        getBuildFFA().getOnlinePlayers().get(event.getPlayer()).getBuildBlocks(), (event.getBlock().getType().equals(Material.WEB) ? false : true)));
+            }
         }
     }
 }

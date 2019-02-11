@@ -121,6 +121,9 @@ public class GameManager {
 
         getBuildFFA().getStatsSQL().addKit(enderpearlKit);
         getBuildFFA().getStatsSQL().updateKit(enderpearlKit);
+
+        getBuildFFA().getStatsSQL().addKit(granateKit);
+        getBuildFFA().getStatsSQL().updateKit(granateKit);
     }
 
     public Inventory createKitInventory() {
