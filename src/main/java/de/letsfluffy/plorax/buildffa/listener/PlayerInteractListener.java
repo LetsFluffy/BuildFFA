@@ -13,10 +13,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import javax.swing.*;
 
 /**
  * (c) by Frederic Kayser(2015-2019)
@@ -43,7 +46,7 @@ public class PlayerInteractListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if(event.getItem() != null) {
-            if(event.getItem().getType().equals(Material.CHEST)) {
+            if(event.getItem().getType().equals(Material.CHEST) && (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))) {
                 Inventory inventory = Bukkit.createInventory(null, 9, "§8» §aInventar sortieren");
                 for(int i = 0; i < getBuildFFA().getOnlinePlayers().get(player).getItemStacks().length; i++) {
                     ItemStack[] itemStacks = getBuildFFA().getOnlinePlayers().get(player).getItemStacks();
@@ -55,9 +58,9 @@ public class PlayerInteractListener implements Listener {
                     }
                 }
                 player.openInventory(inventory);
-            } else if(event.getItem().getType().equals(Material.SLIME_BALL)) {
+            } else if(event.getItem().getType().equals(Material.SLIME_BALL) && (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))) {
                 new PloraxPlayer(player.getUniqueId()).fallback();
-            } else if(event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) {
+            } else if(event.getItem().getType().equals(Material.REDSTONE_TORCH_ON) && (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))) {
                 final Inventory inventory = Bukkit.createInventory(null, 27, "§8» §aWähle eine Kategorie");
                 for(int i = 0; i < 27; i++) {
                     ItemStack itemStack = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15);
