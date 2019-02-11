@@ -104,8 +104,8 @@ public class GameManager {
         EnderpearlKit enderpearlKit = new EnderpearlKit();
         getBuildFFA().getKitRegistry().put(enderpearlKit.getId(), enderpearlKit);
 
-        GranateKit granateKit = new GranateKit();
-        getBuildFFA().getKitRegistry().put(granateKit.getId(), granateKit);
+        //GranateKit granateKit = new GranateKit();
+        //getBuildFFA().getKitRegistry().put(granateKit.getId(), granateKit);
 
         getBuildFFA().getStatsSQL().addKit(knockKit);
         getBuildFFA().getStatsSQL().updateKit(knockKit);
@@ -122,8 +122,8 @@ public class GameManager {
         getBuildFFA().getStatsSQL().addKit(enderpearlKit);
         getBuildFFA().getStatsSQL().updateKit(enderpearlKit);
 
-        getBuildFFA().getStatsSQL().addKit(granateKit);
-        getBuildFFA().getStatsSQL().updateKit(granateKit);
+        //getBuildFFA().getStatsSQL().addKit(granateKit);
+        //getBuildFFA().getStatsSQL().updateKit(granateKit);
     }
 
     public Inventory createKitInventory() {
