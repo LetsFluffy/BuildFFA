@@ -96,8 +96,8 @@ public class GameManager {
         new EnderpearlKit();
         //new GranateKit();
 
-        for(Kit kit : getBuildFFA().getKitRegistry().values()) {
-            kit.update();
+        for (int i = 0; i < getBuildFFA().getKitRegistry().size(); i++) {
+            getBuildFFA().getKitRegistry().get(i).update();
         }
     }
 
@@ -168,9 +168,9 @@ public class GameManager {
             @Override
             public void run() {
                 String message = "§cKeine Daten gefunden";
-                if(mapImportData != null && getBuildFFA().getMapImporter().getMaps().size() > 1) {
+                if (mapImportData != null && getBuildFFA().getMapImporter().getMaps().size() > 1) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-                    String date = simpleDateFormat.format(mapSwitchCounter*1000);
+                    String date = simpleDateFormat.format(mapSwitchCounter * 1000);
                     message = "§7Nächste Map §r§8» §a§l" + mapImportData.getDisplayName() + "§r §8| §a" +
                             date.split(":")[0] + "§7:§a" + date.split(":")[1];
 
@@ -223,8 +223,8 @@ public class GameManager {
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(getBuildFFA(), new Runnable() {
             @Override
             public void run() {
-                for(Player player : Bukkit.getOnlinePlayers()) {
-                    if(player.getLocation().subtract(0, 1, 0).getBlock().getType().equals(Material.HAY_BLOCK)) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (player.getLocation().subtract(0, 1, 0).getBlock().getType().equals(Material.HAY_BLOCK)) {
                         final Vector vector = new Vector();
 
                         final double aDouble = -0.08D;
@@ -246,70 +246,69 @@ public class GameManager {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(getBuildFFA(), new Runnable() {
             @Override
             public void run() {
-               for(Player player : Bukkit.getOnlinePlayers()) {
-                   if(player.getLocation().getY() <= getBuildFFA().getMapImporter().getMap().getDieHigh()) {
-                       if(getBuildFFA().getProjectiles().containsKey(player)) {
-                           getBuildFFA().getProjectiles().get(player).remove();
-                           getBuildFFA().getProjectiles().remove(player);
-                       }
-                       player.teleport(getBuildFFA().getMapImporter().getMap().getSpawn());
-                       player.getInventory().clear();
-                       player.getInventory().setArmorContents(null);
-                       player.getInventory().setItem(0, ItemStackBuilder.getSpawnItems()[0]);
-                       player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[1]);
-                       player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[2]);
+                int spawnHigh = getBuildFFA().getMapImporter().getMap().getSpawnHigh();
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    double y = player.getLocation().getY();
+                    if (y <= getBuildFFA().getMapImporter().getMap().getDieHigh()) {
+                        if (getBuildFFA().getProjectiles().containsKey(player)) {
+                            getBuildFFA().getProjectiles().get(player).remove();
+                            getBuildFFA().getProjectiles().remove(player);
+                        }
+                        player.teleport(getBuildFFA().getMapImporter().getMap().getSpawn());
+                        player.getInventory().clear();
+                        player.getInventory().setArmorContents(null);
+                        player.getInventory().setItem(0, ItemStackBuilder.getSpawnItems()[0]);
+                        player.getInventory().setItem(4, ItemStackBuilder.getSpawnItems()[1]);
+                        player.getInventory().setItem(8, ItemStackBuilder.getSpawnItems()[2]);
 
-                       getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
-                           long[] l = new long[2];
-                           l[0] = 0;
-                           l[1] = 1;
-                           PloraxAPI.getStatsAPI().addStats(player.getUniqueId(), StatsAPI.StatsGameMode.BUILDFFA, l);
-                           PloraxAPI.getCoinAPI().subtractCoins(player.getUniqueId(), 1);
-                       });
+                        getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
+                            long[] l = new long[2];
+                            l[0] = 0;
+                            l[1] = 1;
+                            PloraxAPI.getStatsAPI().addStats(player.getUniqueId(), StatsAPI.StatsGameMode.BUILDFFA, l);
+                            PloraxAPI.getCoinAPI().subtractCoins(player.getUniqueId(), 1);
+                        });
 
-                       if(getBuildFFA().getCombatLog().containsKey(player)) {
-                           Player killer = getBuildFFA().getCombatLog().get(player);
-                           getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
-                               PloraxAPI.getCoinAPI().addCoins(killer.getUniqueId(), getBuildFFA().getKillCoins());
-                               long[] l = new long[2];
-                               l[0] = 1;
-                               l[1] = 0;
-                               PloraxAPI.getStatsAPI().addStats(killer.getUniqueId(), StatsAPI.StatsGameMode.BUILDFFA, l);
-                           });
-                           getBuildFFA().getCombatLog().remove(player);
-                           getBuildFFA().getKillstreak().remove(player);
-                           getBuildFFA().getKillstreak().put(player, 0);
-                           int kills = getBuildFFA().getKillstreak().get(killer);
-                           kills++;
-                           if((kills == 3) || ((kills % 5) == 0)) {
-                               for(Player player1 : Bukkit.getOnlinePlayers()) {
-                                   player1.sendMessage(getBuildFFA().getPrefix() + new PloraxPlayer(killer.getUniqueId()).getPrefixName()
-                                           + " §7hat eine §a§l" + kills + "er§r §7Killstreak!");
-                               }
-                           }
-                           getBuildFFA().getKillstreak().remove(killer);
-                           getBuildFFA().getKillstreak().put(killer, kills);
-                           killer.sendMessage(getBuildFFA().getPrefix() + "§7Du hast " + new PloraxPlayer(player.getUniqueId()).getPrefixName() + " §7getötet.");
-                           killer.setHealth(20);
-                           player.sendMessage(getBuildFFA().getPrefix() + "§7Du wurdest von " + new PloraxPlayer(killer.getUniqueId()).getPrefixName() + " §7getötet.");
-                           PacketScoreboard.updateScoreboard(killer);
-                       } else {
-                           player.sendMessage(getBuildFFA().getPrefix() + "§7Du bist gestorben.");
-                       }
-                       player.setHealth(20);
-                       getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(true);
-                       PacketScoreboard.updateScoreboard(player);
-                       player.setVelocity(new Vector());
-                   } else if(player.getLocation().getY() <= getBuildFFA().getMapImporter().getMap().getSpawnHigh() &&
-                           getBuildFFA().getOnlinePlayers().get(player).isInSpawnArea()) {
-                       player.closeInventory();
-                       getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(false);
-                       player.getInventory().clear();
-                       player.getInventory().setArmorContents(getBuildFFA().getOnlinePlayers().get(player).getSelectedKit().getArmorContents());
+                        if (getBuildFFA().getCombatLog().containsKey(player)) {
+                            Player killer = getBuildFFA().getCombatLog().get(player);
+                            getBuildFFA().getStatsSQL().getExecutorService().execute(() -> {
+                                PloraxAPI.getCoinAPI().addCoins(killer.getUniqueId(), getBuildFFA().getKillCoins());
+                                long[] l = new long[2];
+                                l[0] = 1;
+                                l[1] = 0;
+                                PloraxAPI.getStatsAPI().addStats(killer.getUniqueId(), StatsAPI.StatsGameMode.BUILDFFA, l);
+                            });
+                            getBuildFFA().getCombatLog().remove(player);
+                            getBuildFFA().getKillstreak().remove(player);
+                            getBuildFFA().getKillstreak().put(player, 0);
+                            int kills = getBuildFFA().getKillstreak().get(killer);
+                            kills++;
+                            if ((kills == 3) || ((kills % 5) == 0)) {
+                                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                    player1.sendMessage(getBuildFFA().getPrefix() + new PloraxPlayer(killer.getUniqueId()).getPrefixName()
+                                            + " §7hat eine §a§l" + kills + "er§r §7Killstreak!");
+                                }
+                            }
+                            getBuildFFA().getKillstreak().remove(killer);
+                            getBuildFFA().getKillstreak().put(killer, kills);
+                            killer.sendMessage(getBuildFFA().getPrefix() + "§7Du hast " + new PloraxPlayer(player.getUniqueId()).getPrefixName() + " §7getötet.");
+                            killer.setHealth(20);
+                            player.sendMessage(getBuildFFA().getPrefix() + "§7Du wurdest von " + new PloraxPlayer(killer.getUniqueId()).getPrefixName() + " §7getötet.");
+                            PacketScoreboard.updateScoreboard(killer);
+                        } else {
+                            player.sendMessage(getBuildFFA().getPrefix() + "§7Du bist gestorben.");
+                        }
+                        player.setHealth(20);
+                        PacketScoreboard.updateScoreboard(player);
+                        player.setVelocity(new Vector());
+                    } else if (y<= spawnHigh && player.getInventory().getItem(0).getType().equals(Material.REDSTONE_TORCH_ON)) {
+                        player.closeInventory();
+                        player.getInventory().clear();
+                        player.getInventory().setArmorContents(getBuildFFA().getOnlinePlayers().get(player).getSelectedKit().getArmorContents());
 
-                       getBuildFFA().getOnlinePlayers().get(player).getKit();
-                   }
-               }
+                        getBuildFFA().getOnlinePlayers().get(player).getKit();
+                    }
+                }
             }
         }, 1, 1);
     }
@@ -327,13 +326,13 @@ public class GameManager {
                     if (i == 0) {
                         block.setType(Material.AIR);
                         continue;
-                    } else if (i == 6*20 && buildBlock.isChangeBlock()) {
+                    } else if (i == 6 * 20 && buildBlock.isChangeBlock()) {
                         block.setType(buildBlock.getBuildBlocks().getFirstState().getType());
                         block.setData(buildBlock.getBuildBlocks().getFirstState().getData().getData());
-                    } else if (i == 4*20 && buildBlock.isChangeBlock()) {
+                    } else if (i == 4 * 20 && buildBlock.isChangeBlock()) {
                         block.setType(buildBlock.getBuildBlocks().getSecondState().getType());
                         block.setData(buildBlock.getBuildBlocks().getSecondState().getData().getData());
-                    } else if (i == 2*20 && buildBlock.isChangeBlock()) {
+                    } else if (i == 2 * 20 && buildBlock.isChangeBlock()) {
                         block.setType(buildBlock.getBuildBlocks().getThirdState().getType());
                         block.setData(buildBlock.getBuildBlocks().getThirdState().getData().getData());
                     }

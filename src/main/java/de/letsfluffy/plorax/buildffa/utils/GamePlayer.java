@@ -29,9 +29,6 @@ public class GamePlayer {
 
     private ItemStack[] itemStacks;
 
-    @Setter
-    private boolean inSpawnArea = true;
-
     public GamePlayer(Player player) {
         this.player = player;
         this.selectedKit = BuildFFA.getBuildFFA().getKitRegistry().get(BuildFFA.getBuildFFA().getStatsSQL().getLastKit(player.getUniqueId()));

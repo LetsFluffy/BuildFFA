@@ -96,7 +96,6 @@ public class PlayerDeathListener implements Listener {
         }
         player.setVelocity(new Vector());
         PacketScoreboard.updateScoreboard(player);
-        getBuildFFA().getOnlinePlayers().get(player).setInSpawnArea(true);
 
     }
 
