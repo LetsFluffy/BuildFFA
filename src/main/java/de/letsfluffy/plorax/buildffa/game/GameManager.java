@@ -67,9 +67,9 @@ public class GameManager {
         BuildFFA.getBuildFFA().getMapImporter().importMaps();
         BuildFFA.getBuildFFA().getMapImporter().selectRandomMap();
 
-        BuildFFA.getBuildFFA().getGameManager().registerGameEvents();
-
         BuildFFA.getBuildFFA().getGameManager().registerBuildBlocks();
+
+        BuildFFA.getBuildFFA().getGameManager().registerGameEvents();
 
         BuildFFA.getBuildFFA().registerEvents();
         BuildFFA.getBuildFFA().registerCommands();
@@ -142,6 +142,8 @@ public class GameManager {
             BuildFFA.getBuildFFA().getIdsOfBlocks().add(buildBlocks.getSecondState().getTypeId());
             BuildFFA.getBuildFFA().getIdsOfBlocks().add(buildBlocks.getThirdState().getTypeId());
         }
+        Material material = Material.WEB;
+        BuildFFA.getBuildFFA().getIdsOfBlocks().add(material.getId());
     }
 
     public Inventory createBuildBlockInventory() {

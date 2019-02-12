@@ -131,29 +131,23 @@ public class StatsSQL {
                     String itemsBefore = kitString.split("-")[2];
                     String[] itemBeforeArray = itemsBefore.split(";");
 
-                    final HashMap<ItemStack, Boolean> itemSameValue = new HashMap<>();
+                    int sameValueCounter = 0;
 
                     for(int i = 0; i < itemBeforeArray.length; i++) {
                         int itemID = Integer.valueOf(itemBeforeArray[i].split(":")[0]);
                         byte subID = Byte.valueOf(itemBeforeArray[i].split(":")[1]);
                         for(int j = 0; j < kit.getDefaultItemsSorted().length; j++) {
                             ItemStack itemStack = kit.getDefaultItemsSorted()[j];
-                            if(itemStack.getTypeId() == itemID && itemStack.getData().getData() == subID) {
-                                itemSameValue.put(itemStack, true);
-                                break;
+                            if((itemStack.getTypeId() == itemID && itemStack.getData().getData() == subID) ||
+                                    getBuildFFA().getIdsOfBlocks().contains(itemID)) {
+                                    sameValueCounter++;
+                                    break;
                             }
                         }
                     }
 
-                    int nonAirBlocks = 0;
 
-                    for(int i = 0; i < kit.getDefaultItemsSorted().length; i++) {
-                        if(kit.getDefaultItemsSorted()[i] != null || !kit.getDefaultItemsSorted()[i].getType().equals(Material.AIR)) {
-                            nonAirBlocks++;
-                        }
-                    }
-
-                    if(itemSameValue.size() < nonAirBlocks) {
+                    if(sameValueCounter < 9) {
 
                         for (int i = 0; i < kit.getDefaultItemsSorted().length; i++) {
                             ItemStack itemStack = kit.getDefaultItemsSorted()[i];
