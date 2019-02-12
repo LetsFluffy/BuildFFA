@@ -89,41 +89,16 @@ public class GameManager {
     }
 
     public void registerKits() {
-        KnightKit knightKit = new KnightKit();
-        getBuildFFA().getKitRegistry().put(knightKit.getId(), knightKit);
+        new KnightKit();
+        new KnockKit();
+        new GrapplingHookKit();
+        new BowKit();
+        new EnderpearlKit();
+        //new GranateKit();
 
-        KnockKit knockKit = new KnockKit();
-        getBuildFFA().getKitRegistry().put(knockKit.getId(), knockKit);
-
-        GrapplingHookKit grapplingHookKit = new GrapplingHookKit();
-        getBuildFFA().getKitRegistry().put(grapplingHookKit.getId(), grapplingHookKit);
-
-        BowKit bowKit = new BowKit();
-        getBuildFFA().getKitRegistry().put(bowKit.getId(), bowKit);
-
-        EnderpearlKit enderpearlKit = new EnderpearlKit();
-        getBuildFFA().getKitRegistry().put(enderpearlKit.getId(), enderpearlKit);
-
-        //GranateKit granateKit = new GranateKit();
-        //getBuildFFA().getKitRegistry().put(granateKit.getId(), granateKit);
-
-        getBuildFFA().getStatsSQL().addKit(knockKit);
-        getBuildFFA().getStatsSQL().updateKit(knockKit);
-
-        getBuildFFA().getStatsSQL().addKit(knightKit);
-        getBuildFFA().getStatsSQL().updateKit(knightKit);
-
-        getBuildFFA().getStatsSQL().addKit(grapplingHookKit);
-        getBuildFFA().getStatsSQL().updateKit(grapplingHookKit);
-
-        getBuildFFA().getStatsSQL().addKit(bowKit);
-        getBuildFFA().getStatsSQL().updateKit(bowKit);
-
-        getBuildFFA().getStatsSQL().addKit(enderpearlKit);
-        getBuildFFA().getStatsSQL().updateKit(enderpearlKit);
-
-        //getBuildFFA().getStatsSQL().addKit(granateKit);
-        //getBuildFFA().getStatsSQL().updateKit(granateKit);
+        for(Kit kit : getBuildFFA().getKitRegistry().values()) {
+            kit.update();
+        }
     }
 
     public Inventory createKitInventory() {

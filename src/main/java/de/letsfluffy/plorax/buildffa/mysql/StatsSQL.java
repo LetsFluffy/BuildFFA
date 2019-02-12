@@ -101,7 +101,6 @@ public class StatsSQL {
                 }
                 defaultString = defaultString.substring(0, defaultString.length() - 1);
                 kitsString = kitsString + defaultString;
-
                 updateKits.setString(1, kitsString);
                 updateKits.setString(2, uuid);
                 updateKits.executeUpdate();
@@ -166,7 +165,6 @@ public class StatsSQL {
                             }
                         }
                         newKitData = newKitData.substring(0, newKitData.length() - 1);
-
                         updateKits.setString(1, newKitData);
                         updateKits.setString(2, uuid);
                         updateKits.executeUpdate();
@@ -202,6 +200,7 @@ public class StatsSQL {
                 }
                 defaultString = defaultString.substring(0, defaultString.length() - 1);
                 defaultString = defaultString.replaceFirst("false", "true");
+                System.out.println(defaultString);
                 insertUser.setString(1, uuid.toString());
                 insertUser.setString(2, defaultString);
                 insertUser.setInt(3, 0);
