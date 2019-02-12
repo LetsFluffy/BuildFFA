@@ -145,7 +145,15 @@ public class StatsSQL {
                         }
                     }
 
-                    if(itemSameValue.size() < 9) {
+                    int nonAirBlocks = 0;
+
+                    for(int i = 0; i < kit.getDefaultItemsSorted().length; i++) {
+                        if(kit.getDefaultItemsSorted()[i] != null || kit.getDefaultItemsSorted()[i].getType().equals(Material.AIR)) {
+                            nonAirBlocks++;
+                        }
+                    }
+
+                    if(itemSameValue.size() < nonAirBlocks) {
 
                         for (int i = 0; i < kit.getDefaultItemsSorted().length; i++) {
                             ItemStack itemStack = kit.getDefaultItemsSorted()[i];

@@ -301,12 +301,14 @@ public class GameManager {
                         player.setHealth(20);
                         PacketScoreboard.updateScoreboard(player);
                         player.setVelocity(new Vector());
-                    } else if (y<= spawnHigh && player.getInventory().getItem(0).getType().equals(Material.REDSTONE_TORCH_ON)) {
-                        player.closeInventory();
-                        player.getInventory().clear();
-                        player.getInventory().setArmorContents(getBuildFFA().getOnlinePlayers().get(player).getSelectedKit().getArmorContents());
+                    } else if (y<= spawnHigh && player.getInventory().getItem(0) != null) {
+                        if(player.getInventory().getItem(0).getType().equals(Material.REDSTONE_TORCH_ON)) {
+                            player.closeInventory();
+                            player.getInventory().clear();
+                            player.getInventory().setArmorContents(getBuildFFA().getOnlinePlayers().get(player).getSelectedKit().getArmorContents());
 
-                        getBuildFFA().getOnlinePlayers().get(player).getKit();
+                            getBuildFFA().getOnlinePlayers().get(player).getKit();
+                        }
                     }
                 }
             }

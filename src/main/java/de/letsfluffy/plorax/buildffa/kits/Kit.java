@@ -37,7 +37,7 @@ public abstract class Kit {
 
     public void update() {
         BuildFFA.getBuildFFA().getStatsSQL().addKit(this);
-        BuildFFA.getBuildFFA().getStatsSQL().updateKit(this);
+        //BuildFFA.getBuildFFA().getStatsSQL().updateKit(this);
     }
 
     public ItemStack getIcon() {
