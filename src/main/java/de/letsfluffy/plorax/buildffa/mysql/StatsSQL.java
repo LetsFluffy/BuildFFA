@@ -148,7 +148,7 @@ public class StatsSQL {
                     int nonAirBlocks = 0;
 
                     for(int i = 0; i < kit.getDefaultItemsSorted().length; i++) {
-                        if(kit.getDefaultItemsSorted()[i] != null || kit.getDefaultItemsSorted()[i].getType().equals(Material.AIR)) {
+                        if(kit.getDefaultItemsSorted()[i] != null || !kit.getDefaultItemsSorted()[i].getType().equals(Material.AIR)) {
                             nonAirBlocks++;
                         }
                     }
