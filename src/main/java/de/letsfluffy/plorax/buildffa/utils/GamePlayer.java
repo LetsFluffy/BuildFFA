@@ -5,6 +5,7 @@ import de.letsfluffy.plorax.buildffa.buildblocks.BuildBlocks;
 import de.letsfluffy.plorax.buildffa.kits.Kit;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,9 +36,9 @@ public class GamePlayer {
         this.buildBlocks = BuildFFA.getBuildFFA().getBuildBlockRegistry().get(BuildFFA.getBuildFFA().getStatsSQL().getLastBuildBlock(player.getUniqueId()));
         itemStacks = BuildFFA.getBuildFFA().getStatsSQL().getInventoryItems(getPlayer().getUniqueId(), getSelectedKit());
         itemStacks = getSelectedKit().buildItems(itemStacks);
-        for(Integer id : BuildFFA.getBuildFFA().getKitRegistry().keySet()) {
+        for (Integer id : BuildFFA.getBuildFFA().getKitRegistry().keySet()) {
             Kit kit = BuildFFA.getBuildFFA().getKitRegistry().get(id);
-            if(ownKit(kit)) {
+            if (ownKit(kit)) {
                 getOwnedKits().add(kit);
             }
         }
@@ -48,7 +49,7 @@ public class GamePlayer {
     }
 
     public void selectKit(Kit kit) {
-        if(getOwnedKits().contains(kit)) {
+        if (getOwnedKits().contains(kit)) {
             selectedKit = kit;
             itemStacks = BuildFFA.getBuildFFA().getStatsSQL().getInventoryItems(player.getUniqueId(), kit);
             BuildFFA.getBuildFFA().getStatsSQL().updateLastKit(player.getUniqueId(), kit);
@@ -60,23 +61,25 @@ public class GamePlayer {
 
     public void getKit() {
         Kit kit = getSelectedKit();
-        if(getOwnedKits().contains(kit)) {
+        if (getOwnedKits().contains(kit)) {
             selectedKit = kit;
             getPlayer().getInventory().clear();
             getPlayer().getInventory().setArmorContents(kit.getArmorContents());
             itemStacks = kit.buildItems(itemStacks);
-            for(int i = 0; i < itemStacks.length; i++) {
-                if(!BuildFFA.getBuildFFA().getIdsOfBlocks().contains(itemStacks[i].getTypeId())) {
-                    player.getInventory().setItem(i, itemStacks[i]);
-                } else {
-                    player.getInventory().setItem(i, getBuildBlocks().getDefaultState());
+            for (int i = 0; i < itemStacks.length; i++) {
+                if(itemStacks[i] != null || itemStacks[i].getType().equals(Material.WEB)) {
+                    if (!BuildFFA.getBuildFFA().getIdsOfBlocks().contains(itemStacks[i].getTypeId())) {
+                        player.getInventory().setItem(i, itemStacks[i]);
+                    } else {
+                        player.getInventory().setItem(i, getBuildBlocks().getDefaultState());
+                    }
                 }
             }
         }
     }
 
     public void selectBlocks(BuildBlocks buildBlocks) {
-        if(buildBlocks != this.buildBlocks) {
+        if (buildBlocks != this.buildBlocks) {
             BuildFFA.getBuildFFA().getStatsSQL().updateLastBuildBlock(player.getUniqueId(), buildBlocks);
             this.buildBlocks = buildBlocks;
             player.sendMessage(BuildFFA.getBuildFFA().getPrefix() + "§7Du hast neue Blöcke ausgewählt!");

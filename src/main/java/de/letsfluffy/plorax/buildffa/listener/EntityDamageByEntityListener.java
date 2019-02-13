@@ -9,6 +9,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
  * (c) by Frederic Kayser(2015-2019)
@@ -91,6 +92,9 @@ public class EntityDamageByEntityListener implements Listener {
                     }
                 }
             }, 20 * 8);
+        } else if((event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) ||
+                event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION))){
+            event.setDamage(0);
         } else {
             event.setCancelled(true);
         }

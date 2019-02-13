@@ -202,7 +202,7 @@ public class StatsSQL {
                 }
                 defaultString = defaultString.substring(0, defaultString.length() - 1);
                 defaultString = defaultString.replaceFirst("false", "true");
-                System.out.println(defaultString);
+
                 insertUser.setString(1, uuid.toString());
                 insertUser.setString(2, defaultString);
                 insertUser.setInt(3, 0);

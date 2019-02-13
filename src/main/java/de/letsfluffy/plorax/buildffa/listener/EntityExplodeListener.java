@@ -23,6 +23,6 @@ public class EntityExplodeListener implements Listener {
 
     @EventHandler
     private void onEntityExplode(EntityExplodeEvent event) {
-        event.setCancelled(true);
+
     }
 }

@@ -94,7 +94,7 @@ public class GameManager {
         new GrapplingHookKit();
         new BowKit();
         new EnderpearlKit();
-        //new GranateKit();
+        new GranateKit();
 
         for (int i = 0; i < getBuildFFA().getKitRegistry().size(); i++) {
             getBuildFFA().getKitRegistry().get(i).update();
@@ -142,8 +142,6 @@ public class GameManager {
             BuildFFA.getBuildFFA().getIdsOfBlocks().add(buildBlocks.getSecondState().getTypeId());
             BuildFFA.getBuildFFA().getIdsOfBlocks().add(buildBlocks.getThirdState().getTypeId());
         }
-        Material material = Material.WEB;
-        BuildFFA.getBuildFFA().getIdsOfBlocks().add(material.getId());
     }
 
     public Inventory createBuildBlockInventory() {

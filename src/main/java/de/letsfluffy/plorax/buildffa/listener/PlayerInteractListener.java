@@ -6,10 +6,9 @@ import de.letsfluffy.plorax.buildffa.buildblocks.BuildBlocks;
 import de.letsfluffy.plorax.buildffa.utils.GamePlayer;
 import lombok.Getter;
 import net.plorax.api.util.PloraxPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,8 +17,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.swing.*;
+import java.util.HashMap;
 
 /**
  * (c) by Frederic Kayser(2015-2019)
@@ -29,11 +32,7 @@ import javax.swing.*;
  */
 public class PlayerInteractListener implements Listener {
 
-    //    x
-    //  x x x
-    //x x x x x
-    //  - x -
-    //    x
+    private final HashMap<Integer, Integer> secondSaver = new HashMap<>();
 
     @Getter
     private final BuildFFA buildFFA;
@@ -92,6 +91,35 @@ public class PlayerInteractListener implements Listener {
 
                 buildRescuePlatform(location);
 
+            } else if(event.getItem().getType().equals(Material.CLAY_BALL) && (event.getAction().equals(Action.RIGHT_CLICK_AIR)
+                    || event.getAction().equals(Action.RIGHT_CLICK_BLOCK) )) {
+                ItemStack itemStack = player.getInventory().getItemInHand();
+                itemStack.setAmount(itemStack.getAmount()-1);
+                if(itemStack.getAmount() == 0) {
+                    player.getInventory().remove(player.getInventory().getItemInHand());
+                } else {
+                    player.getInventory().setItemInHand(itemStack);
+                }
+                final Item item = player.getWorld().dropItemNaturally(player.getLocation(), new ItemStack(Material.CLAY_BALL));
+
+                item.setVelocity(player.getEyeLocation().getDirection().multiply(1.5D));
+                item.setPickupDelay(Integer.MAX_VALUE);
+
+                throwBombGranate(item);
+            } else if(event.getItem().getType().equals(Material.GLOWSTONE_DUST)) {
+                ItemStack itemStack = player.getInventory().getItemInHand();
+                itemStack.setAmount(itemStack.getAmount()-1);
+                if(itemStack.getAmount() == 0) {
+                    player.getInventory().remove(player.getInventory().getItemInHand());
+                } else {
+                    player.getInventory().setItemInHand(itemStack);
+                }
+                final Item item = player.getWorld().dropItemNaturally(player.getLocation(), new ItemStack(Material.GLOWSTONE_DUST));
+
+                item.setVelocity(player.getEyeLocation().getDirection().multiply(1.5D));
+                item.setPickupDelay(Integer.MAX_VALUE);
+
+                throwBlendGranate(item);
             }
         } else if(event.getClickedBlock() != null) {
             if(event.getClickedBlock().getType().equals(Material.BED_BLOCK)) {
@@ -194,4 +222,58 @@ public class PlayerInteractListener implements Listener {
 
 
     }
+
+
+    private void throwBombGranate(final Item item) {
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                if(secondSaver.containsKey(item.getEntityId()))
+                    secondSaver.replace(item.getEntityId(), secondSaver.get(item.getEntityId()) + 1);
+                else
+                    secondSaver.put(item.getEntityId(), 1);
+
+                item.getWorld().playSound(item.getLocation(), Sound.NOTE_STICKS, 0.5F, 0.5F);
+                item.getWorld().playEffect(item.getLocation(), Effect.LAVA_POP, 5);
+
+                if(secondSaver.get(item.getEntityId()) >= 12) {
+                    this.cancel();
+                    item.getWorld().createExplosion(item.getLocation().getX(), item.getLocation().getY(), item.getLocation().getZ(), 7, false, false);
+                    item.remove();
+                }
+            }
+        }.runTaskTimer(getBuildFFA(), 0, 5);
+    }
+
+    private void throwBlendGranate(final Item item) {
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                if(secondSaver.containsKey(item.getEntityId()))
+                    secondSaver.replace(item.getEntityId(), secondSaver.get(item.getEntityId()) + 1);
+                else
+                    secondSaver.put(item.getEntityId(), 1);
+
+                item.getWorld().playSound(item.getLocation(), Sound.NOTE_STICKS, 0.5F, 0.5F);
+                item.getWorld().playEffect(item.getLocation(), Effect.LAVA_POP, 5);
+
+                if(secondSaver.get(item.getEntityId()) >= 12) {
+                    this.cancel();
+                    item.getWorld().playSound(item.getLocation(), Sound.EXPLODE, 0.5F, 0.5F);
+                    item.remove();
+
+                    Bukkit.getOnlinePlayers().forEach(player -> {
+                        if(player.getLocation().distance(item.getLocation()) > 7)
+                            return;
+
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 20));
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 200, 20));
+                    });
+                }
+            }
+        }.runTaskTimer(getBuildFFA(), 0, 5);
+    }
+
 }

@@ -31,7 +31,7 @@ public class BlockPlaceListener implements Listener {
             event.getPlayer().sendMessage(getBuildFFA().getPrefix() + "§cIm SpecModus kannst du keine Blöcke platzieren.");
         } else if(getBuildFFA().getMapImporter().getMap().getSpawnHigh() <= event.getBlock().getLocation().getY()) {
             event.setCancelled(true);
-        } else {
+        } else if(event.getBlock() != null){
             if(getBuildFFA().getIdsOfBlocks().contains(event.getBlock().getTypeId()) || event.getBlock().getType().equals(Material.WEB)) {
                 getBuildFFA().getPlacedBlocks().put(event.getBlock().getLocation(), new BuildBlock(event.getBlock(),
                         getBuildFFA().getOnlinePlayers().get(event.getPlayer()).getBuildBlocks(), (event.getBlock().getType().equals(Material.WEB) ? false : true)));

@@ -23,6 +23,6 @@ public class CreatureSpawnListener implements Listener {
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        event.setCancelled(true);
+        //event.setCancelled(true);
     }
 }

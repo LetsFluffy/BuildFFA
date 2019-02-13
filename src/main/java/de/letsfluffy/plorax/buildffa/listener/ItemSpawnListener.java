@@ -23,6 +23,5 @@ public class ItemSpawnListener implements Listener {
 
     @EventHandler
     public void onItemSpawn(ItemSpawnEvent event) {
-        event.setCancelled(true);
     }
 }
